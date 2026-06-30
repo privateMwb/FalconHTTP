@@ -1,8 +1,0 @@
-C:\Users\dell\Desktop\Projects\FalconHTTP\tests\test_all.cpp;C:\Users\dell\Desktop\Projects\FalconHTTP\build\tests.dir\Debug\test_all.obj
-C:\Users\dell\Desktop\Projects\FalconHTTP\tests\test_http_parser.cpp;C:\Users\dell\Desktop\Projects\FalconHTTP\build\tests.dir\Debug\test_http_parser.obj
-C:\Users\dell\Desktop\Projects\FalconHTTP\tests\test_http_serializer.cpp;C:\Users\dell\Desktop\Projects\FalconHTTP\build\tests.dir\Debug\test_http_serializer.obj
-C:\Users\dell\Desktop\Projects\FalconHTTP\tests\test_router.cpp;C:\Users\dell\Desktop\Projects\FalconHTTP\build\tests.dir\Debug\test_router.obj
-C:\Users\dell\Desktop\Projects\FalconHTTP\tests\test_path_matcher.cpp;C:\Users\dell\Desktop\Projects\FalconHTTP\build\tests.dir\Debug\test_path_matcher.obj
-C:\Users\dell\Desktop\Projects\FalconHTTP\tests\test_url_decoder.cpp;C:\Users\dell\Desktop\Projects\FalconHTTP\build\tests.dir\Debug\test_url_decoder.obj
-C:\Users\dell\Desktop\Projects\FalconHTTP\tests\test_static_file_server.cpp;C:\Users\dell\Desktop\Projects\FalconHTTP\build\tests.dir\Debug\test_static_file_server.obj
-C:\Users\dell\Desktop\Projects\FalconHTTP\tests\test_middleware.cpp;C:\Users\dell\Desktop\Projects\FalconHTTP\build\tests.dir\Debug\test_middleware.obj
