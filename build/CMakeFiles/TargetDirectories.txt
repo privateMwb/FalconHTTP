@@ -1,0 +1,5 @@
+C:/Users/dell/Desktop/Projects/FalconHTTP/build/CMakeFiles/FalconHTTPLib.dir
+C:/Users/dell/Desktop/Projects/FalconHTTP/build/CMakeFiles/tests.dir
+C:/Users/dell/Desktop/Projects/FalconHTTP/build/CMakeFiles/basic_server.dir
+C:/Users/dell/Desktop/Projects/FalconHTTP/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/dell/Desktop/Projects/FalconHTTP/build/CMakeFiles/ZERO_CHECK.dir
