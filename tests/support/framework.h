@@ -7,6 +7,13 @@
 // clang-format off
 #include <FalconHTTP/FalconHTTP.h>   // FalconHTTP (library under test) + rain:: alias
 
+#ifndef _WIN32
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#endif
+
 #include "helpers.h"                 // output formatting & printing helpers
 #include "macros.h"                  // RUN/CHK/CHK_THROWS, REGISTER_TEST_SUITE()
 #include "registry.h"                // TestSuite, TestRegistrar, test_registry()

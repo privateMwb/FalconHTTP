@@ -34,12 +34,6 @@
 #include <thread>  // std::thread
 #include <chrono>  // std::chrono::milliseconds
 
-#include <sys/socket.h> // socket, connect, send, recv
-#include <netinet/in.h> // sockaddr_in
-#include <arpa/inet.h>  // inet_pton, htons
-#include <unistd.h>     // close
-// clang-format on
-
 using namespace FalconHTTP::Core;
 using namespace FalconHTTP::Routing;
 using namespace FalconHTTP::HTTP;
