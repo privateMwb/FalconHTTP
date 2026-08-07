@@ -97,7 +97,7 @@ static void live_response_includes_connection_close() {
     CHK(server.start(TestPort));
 
     std::thread runner([&server]() { server.run(); });
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
     std::string response = sendRawRequest(TestPort, "GET /health HTTP/1.1\r\nHost: h\r\n\r\n");
 

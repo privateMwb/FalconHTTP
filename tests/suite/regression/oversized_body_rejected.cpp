@@ -85,7 +85,7 @@ static void oversized_content_length_is_rejected_with_413() {
     CHK(server.start(TestPort));
 
     std::thread runner([&server]() { server.run(); });
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
     // Declares a body far larger than the 16-byte cap, but never
     // actually sends any body bytes - the 413 must come back based on
@@ -119,7 +119,7 @@ static void body_within_limit_is_accepted() {
     CHK(server.start(TestPort));
 
     std::thread runner([&server]() { server.run(); });
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
     std::string request = "POST /upload HTTP/1.1\r\n"
                           "Host: h\r\n"

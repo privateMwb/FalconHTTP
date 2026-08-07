@@ -83,7 +83,7 @@ static void oversized_unterminated_headers_are_rejected_with_431() {
     CHK(server.start(TestPort));
 
     std::thread runner([&server]() { server.run(); });
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
     // Well over 64 bytes, and deliberately never terminated with the
     // blank line that would end the header block.
@@ -113,7 +113,7 @@ static void small_header_block_is_accepted() {
     CHK(server.start(TestPort));
 
     std::thread runner([&server]() { server.run(); });
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
     std::string response = sendRawRequest(TestPort, "GET /x HTTP/1.1\r\nHost: h\r\n\r\n");
 

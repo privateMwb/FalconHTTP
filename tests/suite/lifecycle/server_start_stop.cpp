@@ -62,7 +62,7 @@ static void run_and_stop_transition_is_running() {
 
     // Give run()'s loop a moment to pass its guard checks and set
     // running_ = true before we observe it.
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
     CHK(server.isRunning());
 
     server.stop();
