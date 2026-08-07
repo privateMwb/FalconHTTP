@@ -1,25 +1,9 @@
-/**
- * @file            Socket.h
- *
- * @date            2026-5-8
- *
- * @version         1.0.0
- *
- * @copyright       Copyright (c) 2026 MWB
- *                  All rights reserved.
- *                  https://github.com/privateMwb/FalconHTTP
- *
- * @attention       This source is released under the MIT license
- *                  SPDX-License-Identifier: MIT
- *                  <http://opensource.org/licenses/MIT>
- */
-
 #pragma once
 
 // clang-format off
 #include <cstddef> // std::size_t, std::ptrdiff_t
 #include <cstdint> // fixed-width integer types
-#include <string>  // (forwarded for consumers of this header)
+#include <string>  // std::string
 // clang-format on
 
 // RAII wrapper around a single native TCP socket handle (POSIX file
@@ -95,6 +79,24 @@ class Socket {
      *         isValid() == false if creation failed.
      */
     [[nodiscard]] static Socket createTcp() noexcept;
+
+    // Connection
+
+    /**
+     * @brief Connects this socket to a remote IPv4 TCP endpoint.
+     *
+     * @param address IPv4 address in dotted-decimal notation
+     *        (for example, `"127.0.0.1"`).
+     * @param port Destination TCP port.
+     *
+     * @return true if the connection was established successfully;
+     *         false otherwise.
+     *
+     * @note The Socket must already own a valid TCP socket handle
+     *       (typically created via createTcp()).
+     */
+    [[nodiscard]] bool connect(const std::string& address,
+                               uint16_t port) noexcept;
 
     // Socket Options
 
