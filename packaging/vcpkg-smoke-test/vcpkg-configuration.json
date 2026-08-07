@@ -1,0 +1,11 @@
+{
+  "overlay-ports": [
+    "../vcpkg/ports",
+    "../../libs/internal/FunctionPro/packaging/vcpkg/ports",
+    "../../libs/internal/HashMapPro/packaging/vcpkg/ports",
+    "../../libs/internal/JsonParser/packaging/vcpkg/ports",
+    "../../libs/internal/LRUCache/packaging/vcpkg/ports",
+    "../../libs/internal/ThreadPoolPro/packaging/vcpkg/ports",
+    "../../libs/internal/VectorPro/packaging/vcpkg/ports"
+  ]
+}

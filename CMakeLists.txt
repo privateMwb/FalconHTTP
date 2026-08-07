@@ -1,85 +1,287 @@
-cmake_minimum_required(VERSION 3.20)
-project(FalconHTTP LANGUAGES CXX)
+# ============================================================
+# CMakeLists.txt
+# Build configuration for the FalconHTTP library.
+# ============================================================
+#
+# Sections:
+#   1. C++ Configuration
+#   2. External / Internal Submodule Libraries
+#   3. FalconHTTP Library
+#   4. Subdirectories
+#   5. Installation
+#   6. Packaging
+#
+# ============================================================
 
+cmake_minimum_required(VERSION 3.20)
+
+project(
+    FalconHTTP
+    VERSION 1.0.0
+    LANGUAGES CXX
+)
+
+# ============================================================================
+# C++ Configuration
+# ============================================================================
+
+# Configure the C++ language standard.
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Library
-add_library(FalconHTTPLib STATIC
+# Place all executables directly in the build directory, regardless of
+# which subdirectory defines them (e.g. build/tests, build/benchmarks).
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
-    # Core
-    src/Core/Socket.cpp
-    src/Core/Listener.cpp
-    src/Core/Connection.cpp
-    src/Core/Server.cpp
+# ============================================================================
+# External / Internal Submodule Libraries
+# ============================================================================
+#
+# lib/internal/  -> libraries owned/maintained by this project (ArenaPro,
+#                    VectorPro, JsonPro, CachePro, StackPro, FunctionPro...)
+# lib/external/  -> third-party libraries pinned as submodules
+#
+# Both follow the same layout convention: <repo>/include/<LibName>/*.h
+# so we only need to glob each repo's include/ directory, not the files
+# themselves. This keeps #include paths short, e.g. <JsonPro/Json.h>
+# regardless of how deep the submodule sits in lib/.
+#
+# Deliberately NOT using add_subdirectory() + target_link_libraries() here:
+# that requires every submodule's own CMakeLists.txt to define an
+# add_library() target whose name we'd have to guess correctly (folder
+# names and target/namespace names don't always match -- e.g. JsonParser/
+# vs JsonPro).
+#
+# IMPORTANT: not every submodule is actually header-only (e.g. JsonPro,
+# ThreadPoolPro ship compiled .cpp files). Gluing in include/ dirs alone
+# gets you declarations without definitions -> undefined symbol errors at
+# link time. So alongside each include/ dir, we also glob the matching
+# src/ dir (same <repo>/src/<LibName>/*.cpp convention) and compile those
+# sources directly into FalconHTTP itself. Truly header-only submodules simply
+# contribute an empty src/ glob and cost nothing extra.
 
-    # HTTP
-    src/HTTP/HttpMethod.cpp
-    src/HTTP/HttpRequest.cpp
-    src/HTTP/HttpParser.cpp
-    src/HTTP/HttpStatus.cpp
-    src/HTTP/HttpResponse.cpp
-    src/HTTP/HttpSerializer.cpp
-    src/HTTP/MimeTypes.cpp
-
-    # Routing
-    src/Routing/Route.cpp
-    src/Routing/PathMatcher.cpp
-    src/Routing/Router.cpp
-
-    # Middleware
-    src/Middleware/Logger.cpp
-    src/Middleware/Cors.cpp
-    src/Middleware/Recovery.cpp
-
-    # File Server
-    src/FileServer/StaticFileServer.cpp
-    src/FileServer/FileCache.cpp
-
-    # Utility
-    src/Utility/UrlDecoder.cpp
-
-    # External libs
-    libs/JsonParser/Json.cpp
-    libs/JsonParser/Parser.cpp
-    libs/PulseThreadPool/ThreadPool.cpp
+file(GLOB INTERNAL_LIB_INCLUDE_DIRS CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/libs/internal/*/include"
 )
 
-# Include directories (LONG INCLUDE STYLE ENABLED)
-target_include_directories(FalconHTTPLib PUBLIC
-    # Public API root
-    include
-
-    # Enables: #include "Core/Connection.h"
-    src
-
-    # Internal libs (still usable inside project)
-    libs/HashMap
-    libs/VectorPro
-    libs/JsonParser
-    libs/FunctionPro
-    libs/LRUCache
-    libs/PulseThreadPool
+file(GLOB EXTERNAL_LIB_INCLUDE_DIRS CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/libs/external/*/include"
 )
 
-# Tests
-add_executable(tests
-    tests/test_all.cpp
-    tests/test_http_parser.cpp
-    tests/test_http_serializer.cpp
-    tests/test_router.cpp
-    tests/test_path_matcher.cpp
-    tests/test_url_decoder.cpp
-    tests/test_static_file_server.cpp
-    tests/test_middleware.cpp
+set(SUBMODULE_INCLUDE_DIRS
+    ${INTERNAL_LIB_INCLUDE_DIRS}
+    ${EXTERNAL_LIB_INCLUDE_DIRS}
 )
 
-target_link_libraries(tests PRIVATE FalconHTTPLib)
+foreach(dir ${SUBMODULE_INCLUDE_DIRS})
+    message(STATUS "Include: ${dir}")
+endforeach()
 
-# Examples
-add_executable(basic_server
-    examples/basic_server.cpp
+# Compile each submodule's own sources into FalconHTTP directly, so libraries
+# that aren't header-only (JsonPro, ThreadPoolPro, ...) actually get
+# linked instead of just declared.
+set(SUBMODULE_SOURCES "")
+foreach(include_dir ${SUBMODULE_INCLUDE_DIRS})
+    get_filename_component(repo_root "${include_dir}" DIRECTORY)
+    file(GLOB_RECURSE repo_sources CONFIGURE_DEPENDS
+        "${repo_root}/src/*.cpp"
+    )
+    if(repo_sources)
+        message(STATUS "Compiling submodule sources from: ${repo_root}/src")
+        list(APPEND SUBMODULE_SOURCES ${repo_sources})
+    endif()
+endforeach()
+
+# ============================================================================
+# FalconHTTP Library (auto: header-only INTERFACE if no .cpp files, STATIC otherwise)
+# ============================================================================
+
+# Collect any library source files under src/FalconHTTP/.
+# CONFIGURE_DEPENDS makes CMake re-run this glob on reconfigure, so
+# adding sources to a previously header-only project is picked up
+# automatically on the next cmake run -- no manual editing required.
+file(GLOB_RECURSE LIB_SOURCES CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/${PROJECT_NAME}/*.cpp"
 )
 
-target_link_libraries(basic_server PRIVATE FalconHTTPLib)
+# Fold in any submodule sources so a submodule that isn't header-only
+# (e.g. JsonPro, ThreadPoolPro) still gets compiled and linked, and so
+# FalconHTTP correctly becomes a STATIC target rather than INTERFACE the
+# moment any of them has real .cpp files, even if FalconHTTP itself doesn't.
+list(APPEND LIB_SOURCES ${SUBMODULE_SOURCES})
+
+if(LIB_SOURCES)
+    # Sources found (Database.cpp, Table.cpp, Page.cpp, Record.cpp,
+    # QueryEngine.cpp, Concurrency.cpp, Serializer.cpp, StorageEngine.cpp,
+    # etc., plus any compiled submodule sources): build a real compiled
+    # static library.
+    add_library(
+        ${PROJECT_NAME}
+        STATIC
+        ${LIB_SOURCES}
+    )
+
+    target_include_directories(
+        ${PROJECT_NAME}
+        PUBLIC
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+            $<INSTALL_INTERFACE:include>
+    )
+
+    target_compile_features(
+        ${PROJECT_NAME}
+        PUBLIC
+            cxx_std_23
+    )
+
+    set(MINIDB_VISIBILITY PUBLIC)
+else()
+    # No sources: header-only library, INTERFACE target.
+    add_library(
+        ${PROJECT_NAME}
+        INTERFACE
+    )
+
+    target_include_directories(
+        ${PROJECT_NAME}
+        INTERFACE
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+            $<INSTALL_INTERFACE:include>
+    )
+
+    target_compile_features(
+        ${PROJECT_NAME}
+        INTERFACE
+            cxx_std_23
+    )
+
+    set(MINIDB_VISIBILITY INTERFACE)
+endif()
+
+# Expose each submodule include directory individually.
+# NOTE: Do NOT interpolate SUBMODULE_INCLUDE_DIRS directly inside a
+# generator expression (e.g. $<BUILD_INTERFACE:${SUBMODULE_INCLUDE_DIRS}>).
+# It's a semicolon-separated list, and CMake's command parser splits on
+# semicolons before the genex is evaluated, corrupting the first entry.
+# Looping and wrapping one path per call keeps each genex well-formed.
+#
+# MINIDB_VISIBILITY matches whichever branch above actually ran: PUBLIC
+# for the compiled STATIC case, INTERFACE for the header-only case (an
+# INTERFACE target cannot use PUBLIC/PRIVATE).
+foreach(dir ${SUBMODULE_INCLUDE_DIRS})
+    target_include_directories(
+        ${PROJECT_NAME}
+        ${MINIDB_VISIBILITY}
+        $<BUILD_INTERFACE:${dir}>
+    )
+endforeach()
+
+# ============================================================================
+# Subdirectories
+# ============================================================================
+
+# tests/, benchmarks/, and examples/ each own their own CMakeLists.txt
+# and define their own executable target(s) from their own source layout
+# (e.g. tests/suite/concurrency/*.cpp, tests/suite/integration/*.cpp, ...).
+# Consumers (e.g. vcpkg) should disable these -- only the library itself
+# needs to be configured/installed for downstream projects. Defaults to
+# ON so local development and existing CI workflows are unaffected.
+option(BUILD_TESTS "Build the test suite" ON)
+option(BUILD_BENCHMARKS "Build the benchmark suite" ON)
+option(BUILD_REGRESSION "Build the regression test" ON)
+option(BUILD_EXAMPLES "Build the examples suite" ON)
+
+enable_testing()
+
+if(BUILD_TESTS)
+    add_subdirectory(tests tests_build)
+endif()
+
+if(BUILD_BENCHMARKS)
+    add_subdirectory(benchmarks benchmarks_build)
+endif()
+
+if(BUILD_REGRESSION)
+    add_subdirectory(regression regression_build)
+endif()
+
+if(BUILD_EXAMPLES)
+    add_subdirectory(examples examples_build)
+endif()
+
+# ============================================================================
+# Installation
+# ============================================================================
+
+# Install the FalconHTTP target and export it for downstream projects.
+install(
+    TARGETS ${PROJECT_NAME}
+    EXPORT ${PROJECT_NAME}Targets
+)
+
+# Install the exported CMake targets.
+install(
+    EXPORT ${PROJECT_NAME}Targets
+    FILE ${PROJECT_NAME}Targets.cmake
+    NAMESPACE ${PROJECT_NAME}::
+    DESTINATION lib/cmake/${PROJECT_NAME}
+)
+
+# Install the public header files.
+install(
+    DIRECTORY include/
+    DESTINATION include
+)
+
+# Install each submodule's headers into the SAME include/ destination as
+# FalconHTTP's own headers above, rather than a separate location. FalconHTTP's
+# target only declares $<INSTALL_INTERFACE:include> once (on its own
+# target_include_directories call, further up) -- merging submodule
+# headers into that same installed include/ tree means that single
+# INSTALL_INTERFACE entry covers them too, with no extra per-submodule
+# genex needed.
+#
+# BUGFIX: previously, submodule include dirs were only ever wired in via
+# $<BUILD_INTERFACE:${dir}>, never $<INSTALL_INTERFACE:...>, and their
+# headers were never install()'d anywhere. This was invisible in-tree
+# (tests_build/benchmarks_build/regression_build consume FalconHTTP via
+# add_subdirectory, where BUILD_INTERFACE applies) but broke the first
+# real out-of-tree consumer -- an installed package found via
+# find_package(FalconHTTP CONFIG), e.g. via vcpkg/Conan -- with
+# "JsonPro/Json.h: No such file or directory" despite FalconHTTP itself
+# having installed and configured successfully.
+foreach(dir ${SUBMODULE_INCLUDE_DIRS})
+    install(
+        DIRECTORY "${dir}/"
+        DESTINATION include
+    )
+endforeach()
+
+# ============================================================================
+# Packaging
+# ============================================================================
+
+include(CMakePackageConfigHelpers)
+
+# Generate the package configuration file.
+configure_package_config_file(
+    cmake/${PROJECT_NAME}Config.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+    INSTALL_DESTINATION lib/cmake/${PROJECT_NAME}
+)
+
+# Generate the package version file.
+write_basic_package_version_file(
+    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion
+)
+
+# Install the package configuration files.
+install(
+    FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
+    DESTINATION lib/cmake/${PROJECT_NAME}
+)

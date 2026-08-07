@@ -1,0 +1,145 @@
+// Regression test: a request whose Content-Length exceeds
+// ServerConfig::maxBodySize must be rejected with 413 Payload Too
+// Large, without the server attempting to read/buffer the full body.
+//
+// The original issue: Server had no cap on Content-Length or the
+// accumulated read buffer at all - a client could declare an
+// arbitrary Content-Length and the server would keep growing its
+// buffer waiting for that many bytes to arrive, an unauthenticated
+// memory-exhaustion DoS. Fixed by checking Content-Length against
+// maxBodySize_ immediately after headers are parsed, before entering
+// the body-read loop, and responding 413 without ever trying to read
+// the (possibly enormous, possibly never-arriving) body.
+//
+// SCOPE: see connection_close_sent.cpp for why this needs a live
+// Server and raw POSIX client code, and the fixed-port caveat (this
+// file uses a different port to avoid colliding with that test if
+// both suites run in the same process).
+
+#include <support/framework.h>
+
+// clang-format off
+#include <thread>  // std::thread
+#include <chrono>  // std::chrono::milliseconds
+
+#include <sys/socket.h> // socket, connect, send, recv
+#include <netinet/in.h> // sockaddr_in
+#include <arpa/inet.h>  // inet_pton, htons
+#include <unistd.h>     // close
+// clang-format on
+
+using namespace FalconHTTP::Core;
+using namespace FalconHTTP::Routing;
+using namespace FalconHTTP::HTTP;
+using namespace FalconHTTP::Config;
+
+namespace {
+
+constexpr uint16_t TestPort = 18474;
+
+// See connection_close_sent.cpp for details on this helper.
+std::string sendRawRequest(uint16_t port, const std::string& request) {
+    int fd = ::socket(AF_INET, SOCK_STREAM, 0);
+    if (fd < 0)
+        return {};
+
+    sockaddr_in addr{};
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(port);
+    ::inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
+
+    if (::connect(fd, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) != 0) {
+        ::close(fd);
+        return {};
+    }
+
+    ::send(fd, request.data(), request.size(), 0);
+
+    std::string response;
+    char buffer[4096];
+    ssize_t n;
+    while ((n = ::recv(fd, buffer, sizeof(buffer), 0)) > 0) {
+        response.append(buffer, static_cast<std::size_t>(n));
+    }
+
+    ::close(fd);
+    return response;
+}
+
+} // namespace
+
+// Verifies a request declaring a Content-Length above the configured
+// maxBodySize is rejected with 413, without the client needing to
+// actually send that many body bytes - the check must happen against
+// the declared length before the read loop begins.
+static void oversized_content_length_is_rejected_with_413() {
+    ServerConfig config;
+    config.maxBodySize = 16; // tiny cap to keep the test fast
+
+    Router router;
+    router.post("/upload", [](const HttpRequest&, HttpResponse& response) {
+        response.setStatus(HttpStatus::Ok);
+    });
+
+    Server server(router, config);
+    CHK(server.start(TestPort));
+
+    std::thread runner([&server]() { server.run(); });
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // Declares a body far larger than the 16-byte cap, but never
+    // actually sends any body bytes - the 413 must come back based on
+    // the header alone.
+    std::string request = "POST /upload HTTP/1.1\r\n"
+                          "Host: h\r\n"
+                          "Content-Length: 1000\r\n"
+                          "\r\n";
+
+    std::string response = sendRawRequest(TestPort, request);
+
+    server.stop();
+    runner.join();
+
+    CHK(response.starts_with("HTTP/1.1 413"));
+}
+
+// Verifies a request within the configured maxBodySize is accepted
+// normally - the cap must not be overly aggressive.
+static void body_within_limit_is_accepted() {
+    ServerConfig config;
+    config.maxBodySize = 16;
+
+    Router router;
+    router.post("/upload", [](const HttpRequest& request, HttpResponse& response) {
+        response.setStatus(HttpStatus::Ok);
+        response.setBody(request.body());
+    });
+
+    Server server(router, config);
+    CHK(server.start(TestPort));
+
+    std::thread runner([&server]() { server.run(); });
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    std::string request = "POST /upload HTTP/1.1\r\n"
+                          "Host: h\r\n"
+                          "Content-Length: 5\r\n"
+                          "\r\n"
+                          "hello";
+
+    std::string response = sendRawRequest(TestPort, request);
+
+    server.stop();
+    runner.join();
+
+    CHK(response.starts_with("HTTP/1.1 200 OK\r\n"));
+    CHK(response.ends_with("hello"));
+}
+
+// Executes all oversized-body regression test cases.
+static void run_tests() {
+    RUN(oversized_content_length_is_rejected_with_413);
+    RUN(body_within_limit_is_accepted);
+}
+
+REGISTER_TEST_SUITE();

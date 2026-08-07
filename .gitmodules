@@ -1,0 +1,18 @@
+[submodule "libs/internal/FunctionPro"]
+	path = libs/internal/FunctionPro
+	url = https://github.com/privateMwb/FunctionPro.git
+[submodule "libs/internal/HashMapPro"]
+	path = libs/internal/HashMapPro
+	url = https://github.com/privateMwb/HashMapPro.git
+[submodule "libs/internal/JsonParser"]
+	path = libs/internal/JsonParser
+	url = https://github.com/privateMwb/JsonParser.git
+[submodule "libs/internal/LRUCache"]
+	path = libs/internal/LRUCache
+	url = https://github.com/privateMwb/LRUCache.git
+[submodule "libs/internal/ThreadPoolPro"]
+	path = libs/internal/ThreadPoolPro
+	url = https://github.com/privateMwb/ThreadPoolPro.git
+[submodule "libs/internal/VectorPro"]
+	path = libs/internal/VectorPro
+	url = https://github.com/privateMwb/VectorPro.git

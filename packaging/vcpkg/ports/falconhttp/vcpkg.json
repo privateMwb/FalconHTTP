@@ -1,0 +1,11 @@
+{
+  "name": "falconhttp",
+  "version": "1.0.0",
+  "description": "Embedded C++ HTTP server library built on this project's own container, caching, concurrency, JSON, and function-wrapper libraries.",
+  "homepage": "https://github.com/privateMwb/FalconHTTP",
+  "license": "MIT",
+  "dependencies": [
+    "vcpkg-cmake",
+    "vcpkg-cmake-config"
+  ]
+}
