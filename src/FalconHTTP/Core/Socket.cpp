@@ -74,15 +74,14 @@ Socket::~Socket() noexcept {
     close();
 }
 
-Socket::Socket(Socket&& other) noexcept : fd_(other.fd_) {
-    other.fd_ = invalidHandle;
-}
+Socket::Socket(Socket&& other) noexcept
+    : fd_(other.fd_.exchange(invalidHandle, std::memory_order_acq_rel)) {}
 
 Socket& Socket::operator=(Socket&& other) noexcept {
     if (this != &other) {
         close();
-        fd_ = other.fd_;
-        other.fd_ = invalidHandle;
+        fd_.store(other.fd_.exchange(invalidHandle, std::memory_order_acq_rel),
+                  std::memory_order_release);
     }
     return *this;
 }
@@ -166,24 +165,24 @@ std::ptrdiff_t Socket::receive(void* buffer, std::size_t length) noexcept {
 // ============================================================
 
 void Socket::close() noexcept {
-    if (fd_ == invalidHandle)
+    int fd = fd_.exchange(invalidHandle, std::memory_order_acq_rel);
+
+    if (fd == invalidHandle)
         return;
 
 #ifdef _WIN32
     // Wake any blocking send()/recv() before closing.
-    ::shutdown(fd_, SD_BOTH);
-    ::closesocket(fd_);
+    ::shutdown(fd, SD_BOTH);
+    ::closesocket(fd);
 #else
     // Wake any blocking send()/recv() before closing.
-    ::shutdown(fd_, SHUT_RDWR);
-    ::close(fd_);
+    ::shutdown(fd, SHUT_RDWR);
+    ::close(fd);
 #endif
-
-    fd_ = invalidHandle;
 }
 
 bool Socket::isValid() const noexcept {
-    return fd_ != invalidHandle;
+    return fd_.load(std::memory_order_acquire) != invalidHandle;
 }
 
 // ============================================================
@@ -191,7 +190,7 @@ bool Socket::isValid() const noexcept {
 // ============================================================
 
 int Socket::handle() const noexcept {
-    return fd_;
+    return fd_.load(std::memory_order_acquire);
 }
 
 } // namespace FalconHTTP::Core

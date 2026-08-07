@@ -1,6 +1,7 @@
 #pragma once
 
 // clang-format off
+#include <atomic>  // std::atomic
 #include <cstddef> // std::size_t, std::ptrdiff_t
 #include <cstdint> // fixed-width integer types
 #include <string>  // std::string
@@ -41,7 +42,7 @@ class Socket {
 
   private:
     // Storage
-    int fd_ = invalidHandle;
+    std::atomic<int> fd_{invalidHandle};
 
   public:
     // Constructors & Destructor
