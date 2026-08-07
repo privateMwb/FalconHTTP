@@ -21,7 +21,17 @@
 // clang-format off
 #include <thread>  // std::thread
 #include <chrono>  // std::chrono::milliseconds
+#include <string>
 
+#ifdef _WIN32
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#endif
 // clang-format on
 
 using namespace FalconHTTP::Core;
@@ -33,32 +43,64 @@ namespace {
 
 constexpr uint16_t TestPort = 18474;
 
+#ifdef _WIN32
+using SocketHandle = SOCKET;
+using SocketLength = int;
+
+inline void closeSocket(SocketHandle s) {
+    ::closesocket(s);
+}
+
+constexpr SocketHandle InvalidSocket = INVALID_SOCKET;
+
+#else
+
+using SocketHandle = int;
+using SocketLength = ssize_t;
+
+inline void closeSocket(SocketHandle s) {
+    ::close(s);
+}
+
+constexpr SocketHandle InvalidSocket = -1;
+
+#endif
+
 // See connection_close_sent.cpp for details on this helper.
 std::string sendRawRequest(uint16_t port, const std::string& request) {
-    int fd = ::socket(AF_INET, SOCK_STREAM, 0);
-    if (fd < 0)
+    SocketHandle fd = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (fd == InvalidSocket)
         return {};
 
     sockaddr_in addr{};
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
-    ::inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
 
-    if (::connect(fd, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) != 0) {
-        ::close(fd);
+    if (::inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr) != 1) {
+        closeSocket(fd);
         return {};
     }
 
+    if (::connect(fd, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) != 0) {
+        closeSocket(fd);
+        return {};
+    }
+
+#ifdef _WIN32
+    ::send(fd, request.data(), static_cast<int>(request.size()), 0);
+#else
     ::send(fd, request.data(), request.size(), 0);
+#endif
 
     std::string response;
     char buffer[4096];
-    ssize_t n;
+
+    SocketLength n;
     while ((n = ::recv(fd, buffer, sizeof(buffer), 0)) > 0) {
         response.append(buffer, static_cast<std::size_t>(n));
     }
 
-    ::close(fd);
+    closeSocket(fd);
     return response;
 }
 
@@ -83,9 +125,6 @@ static void oversized_content_length_is_rejected_with_413() {
     std::thread runner([&server]() { server.run(); });
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
-    // Declares a body far larger than the 16-byte cap, but never
-    // actually sends any body bytes - the 413 must come back based on
-    // the header alone.
     std::string request = "POST /upload HTTP/1.1\r\n"
                           "Host: h\r\n"
                           "Content-Length: 1000\r\n"
