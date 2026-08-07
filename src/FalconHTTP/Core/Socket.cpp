@@ -111,10 +111,7 @@ Socket Socket::createTcp() noexcept {
 bool Socket::setReuseAddr(bool enable) noexcept {
     int value = enable ? 1 : 0;
 
-    return ::setsockopt(fd_,
-                        SOL_SOCKET,
-                        SO_REUSEADDR,
-                        reinterpret_cast<const char*>(&value),
+    return ::setsockopt(fd_, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char*>(&value),
                         sizeof(value)) == 0;
 }
 
@@ -141,17 +138,10 @@ bool Socket::setNoDelay(bool enable) noexcept {
     int value = enable ? 1 : 0;
 
 #ifdef _WIN32
-    return ::setsockopt(fd_,
-                        IPPROTO_TCP,
-                        TCP_NODELAY,
-                        reinterpret_cast<const char*>(&value),
+    return ::setsockopt(fd_, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<const char*>(&value),
                         sizeof(value)) == 0;
 #else
-    return ::setsockopt(fd_,
-                        IPPROTO_TCP,
-                        TCP_NODELAY,
-                        &value,
-                        sizeof(value)) == 0;
+    return ::setsockopt(fd_, IPPROTO_TCP, TCP_NODELAY, &value, sizeof(value)) == 0;
 #endif
 }
 

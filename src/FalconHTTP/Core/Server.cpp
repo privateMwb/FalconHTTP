@@ -87,9 +87,9 @@ void Server::run() {
         return;
     }
 
-    running_ = true;
+    running_.store(true, std::memory_order_release);
 
-    while (running_) {
+    while (running_.load(std::memory_order_acquire)) {
         Socket clientSocket = listener_.accept();
 
         if (!clientSocket.isValid())
@@ -105,12 +105,12 @@ void Server::run() {
 }
 
 void Server::stop() noexcept {
-    running_ = false;
+    running_.store(false, std::memory_order_release);
     listener_.stop();
 }
 
 bool Server::isRunning() const noexcept {
-    return running_;
+    return running_.load(std::memory_order_acquire);
 }
 
 // ============================================================

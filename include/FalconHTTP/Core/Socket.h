@@ -95,8 +95,7 @@ class Socket {
      * @note The Socket must already own a valid TCP socket handle
      *       (typically created via createTcp()).
      */
-    [[nodiscard]] bool connect(const std::string& address,
-                               uint16_t port) noexcept;
+    [[nodiscard]] bool connect(const std::string& address, uint16_t port) noexcept;
 
     // Socket Options
 

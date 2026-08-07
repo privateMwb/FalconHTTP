@@ -38,9 +38,7 @@ std::string sendRawRequest(uint16_t port, const std::string& request) {
     addr.sin_port = htons(port);
     ::inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
 
-    if (::connect(socket.handle(),
-                  reinterpret_cast<sockaddr*>(&addr),
-                  sizeof(addr)) != 0) {
+    if (::connect(socket.handle(), reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) != 0) {
         return {};
     }
 
@@ -77,11 +75,9 @@ static void live_response_includes_connection_close() {
     std::thread runner([&server]() { server.run(); });
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
-    std::string response =
-        sendRawRequest(TestPort,
-                       "GET /health HTTP/1.1\r\n"
-                       "Host: h\r\n"
-                       "\r\n");
+    std::string response = sendRawRequest(TestPort, "GET /health HTTP/1.1\r\n"
+                                                    "Host: h\r\n"
+                                                    "\r\n");
 
     server.stop();
     runner.join();
