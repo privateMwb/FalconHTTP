@@ -27,6 +27,7 @@
 #include <VectorPro/Vector.h>         // Vector
 
 #include <cstdint> // uint16_t
+#include <atomic>  // std::atomic
 // clang-format on
 
 using namespace ThreadPoolPro;
@@ -112,7 +113,7 @@ class Server {
     Routing::Router* router_ = nullptr;
     ThreadPool pool_;
     Vector<Middleware::MiddlewareFn> middleware_;
-    bool running_ = false;
+    std::atomic<bool> running_{false};
 
     /// Port used by the no-argument start() overload. Defaults to
     /// ServerConfig's default port (8080) even when Server was built
