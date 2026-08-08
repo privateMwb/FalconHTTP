@@ -28,14 +28,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Install dependencies
         run: |
           sudo apt update
           sudo apt install -y cmake clang
 
-      # Only benchmarks/ and tools/ (the regression tool) are needed
-      # here — tests/examples aren't exercised by this workflow.
+      # Only benchmarks/ and regression/ (the regression tool) are
+      # needed here -- tests/examples aren't exercised by this workflow.
       - name: Configure
         run: |
           cmake -S . -B build \
