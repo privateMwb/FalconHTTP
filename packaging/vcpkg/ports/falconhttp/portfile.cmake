@@ -1,7 +1,7 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO privateMwb/FalconHTTP
-    REF REPLACE_WITH_FALCONHTTP_COMMIT_SHA
+    REF 0
     SHA512 0
 )
 
@@ -12,37 +12,37 @@ vcpkg_from_github(
 vcpkg_from_github(
     OUT_SOURCE_PATH FUNCTIONPRO_SOURCE_PATH
     REPO privateMwb/FunctionPro
-    REF REPLACE_WITH_FUNCTIONPRO_COMMIT_SHA
+    REF 0
     SHA512 0
 )
 vcpkg_from_github(
     OUT_SOURCE_PATH HASHMAPPRO_SOURCE_PATH
     REPO privateMwb/HashMapPro
-    REF REPLACE_WITH_HASHMAPPRO_COMMIT_SHA
+    REF 0
     SHA512 0
 )
 vcpkg_from_github(
     OUT_SOURCE_PATH JSONPARSER_SOURCE_PATH
     REPO privateMwb/JsonParser
-    REF REPLACE_WITH_JSONPARSER_COMMIT_SHA
+    REF 0
     SHA512 0
 )
 vcpkg_from_github(
     OUT_SOURCE_PATH LRUCACHE_SOURCE_PATH
     REPO privateMwb/LRUCache
-    REF REPLACE_WITH_LRUCACHE_COMMIT_SHA
+    REF 0
     SHA512 0
 )
 vcpkg_from_github(
     OUT_SOURCE_PATH THREADPOOLPRO_SOURCE_PATH
     REPO privateMwb/ThreadPoolPro
-    REF REPLACE_WITH_THREADPOOLPRO_COMMIT_SHA
+    REF 0
     SHA512 0
 )
 vcpkg_from_github(
     OUT_SOURCE_PATH VECTORPRO_SOURCE_PATH
     REPO privateMwb/VectorPro
-    REF REPLACE_WITH_VECTORPRO_COMMIT_SHA
+    REF 0
     SHA512 0
 )
 
