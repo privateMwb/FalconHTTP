@@ -3,82 +3,96 @@
 This document describes the benchmark categories under `suite/` — what
 each one measures, and the individual benchmarks it contains.
 
-Every benchmark compares FalconHTTP against stdLRU — a std::list +
-std::unordered_map implementation, the conventional way an LRU cache is
-built in C++. A category can support more than one standard for
-comparison, but for now each category is benchmarked against a single
-standard.
+Unlike LRUCache's suite, there's no natural "std" equivalent to
+benchmark FalconHTTP against — no standard-library HTTP parser, router,
+or serializer exists to pair each benchmark with. Every `BENCH_SOLO()`
+call below times FalconHTTP alone. If a comparison target (another
+library, or a minimal hand-rolled baseline) gets added later, this
+doc — and the paired-vs-solo macro choice per file — should be
+revisited.
 
-Every `BENCH()` call, in every category below, is automatically repeated
-at three iteration tiers — SMALL (10K), MEDIUM (100K), and LARGE (1M) —
-to smooth out timing noise and show whether relative performance holds
-steady as call volume increases. This applies uniformly across the whole
-suite; it is not specific to any one category. The **Scaling** category
-below measures something different: how per-operation cost changes as
-capacity itself grows or shrinks, independent of iteration count.
-
-Some benchmarks have no meaningful stdLRU equivalent — stdLRU tracks no
-hit/miss statistics and has no recency-order introspection. Those run
-through `BENCH_SOLO()` instead of `BENCH()`, timing FalconHTTP alone.
+Every `BENCH_SOLO()` call, in every category below, is automatically
+repeated at three iteration tiers — SMALL (10K), MEDIUM (100K), and
+LARGE (1M) — to smooth out timing noise and show whether cost holds
+steady as call volume increases, mirroring LRUCache's convention. The
+**Scaling** category below measures something different: how
+per-operation cost changes as some structural size (route count,
+header count, middleware chain length) grows, independent of
+iteration count.
 
 ---
 
 ## Access
 
-Benchmarks read and lookup operations on already-constructed data —
-retrieving values by key, indexed access, and existence checks.
+Benchmarks read and lookup operations against an already-built route
+table or cache — matching a path, resolving a route, and retrieving a
+cached entry.
 
 ### Benchmarks
 
-
+- `path_match.cpp` — `PathMatcher::match()` against a fixed pattern
+- `dispatch_hit.cpp` — `Router::dispatch()` on a matching method + path
+- `dispatch_miss.cpp` — `Router::dispatch()` on a path with no matching route
+- `cache_hit.cpp` — `FileCache::get()` on an existing entry
 
 ---
 
 ## Core
 
 Benchmarks the fundamental, most frequently exercised operations —
-parsing raw input into the in-memory structure, serializing it back
-to text, and equality comparison between instances.
+parsing a request, serializing a response, running it through the
+middleware chain, and writing into the cache.
 
 ### Benchmarks
 
-
+- `request_line.cpp` — `HttpParser::parse()`, minimal request line + headers
+- `header_heavy.cpp` — `HttpParser::parse()`, many headers
+- `body_heavy.cpp` — `HttpParser::parse()`, large body
+- `header_output.cpp` — `HttpSerializer::serialize()`, many headers
+- `body_output.cpp` — `HttpSerializer::serialize()`, large body
+- `cache_put.cpp` — `FileCache::put()` insert
+- `chain_overhead.cpp` — full middleware chain execution per request
+- `cors_overhead.cpp` — `Cors` middleware execution alone
 
 ---
 
 ## Lifecycle
 
 Benchmarks object lifetime operations — construction, destruction,
-copying, and moving — across the different value kinds a JSON value
-can hold (null, bool, number, short/long string, array, object).
+and moving — across the RAII wrappers around native OS resources.
 
 ### Benchmarks
 
-
+- `socket_construction.cpp` — `Socket::createTcp()` construction and close
+- `connection_move.cpp` — `Connection` move-construct and move-assign
+- `server_construction.cpp` — `Server` construction (thread pool startup cost)
 
 ---
 
 ## Scaling
 
-Benchmarks how per-operation cost changes as the *size of the input
-data* grows — for example, an array or object with an increasing
-number of elements, or JSON with increasing nesting depth. This is a
-separate axis from the SMALL/MEDIUM/LARGE iteration tiers described
-above: those repeat the same fixed-size operation more times, while
-Scaling grows the operation itself and observes the resulting cost.
+Benchmarks how per-operation cost changes as a structural size grows
+— a separate axis from the SMALL/MEDIUM/LARGE iteration tiers above:
+those repeat the same fixed-size operation more times, while Scaling
+grows the structure itself (route table, header count, middleware
+chain) and observes the resulting per-call cost. Directly quantifies
+`Router::dispatch()`'s linear-scan cost as route count grows.
 
 ### Benchmarks
 
-
+- `route_table_growth.cpp` — `dispatch()` cost as registered route count increases
+- `header_count_growth.cpp` — parse/serialize cost as header count increases
+- `middleware_chain_growth.cpp` — chain execution cost as middleware count increases
 
 ---
 
 ## Utility
 
-Benchmarks helper and miscellaneous operations that don't belong to
-any of the categories above — pretty-printing, string formatting,
-and similar non-core utilities.
+Benchmarks small, frequently-called conversion and lookup functions
+that don't belong to any of the categories above.
 
 ### Benchmarks
 
-
+- `url_decode.cpp` — `UrlDecoder::decode()`
+- `mime_lookup.cpp` — `mimeTypeFromExtension()`
+- `method_convert.cpp` — `methodFromString()` / `methodToString()`

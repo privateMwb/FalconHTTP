@@ -1,0 +1,23 @@
+[
+  {
+    "suite": "Request Line",
+    "operation": "parse() minimal request line",
+    "total_ns": 27196846,
+    "iterations": 10000,
+    "ns_per_op": 2719.68
+  },
+  {
+    "suite": "Request Line",
+    "operation": "parse() minimal request line",
+    "total_ns": 263473616,
+    "iterations": 100000,
+    "ns_per_op": 2634.74
+  },
+  {
+    "suite": "Request Line",
+    "operation": "parse() minimal request line",
+    "total_ns": 2878469000,
+    "iterations": 1000000,
+    "ns_per_op": 2878.47
+  }
+]

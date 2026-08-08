@@ -143,7 +143,7 @@ inline void doNotOptimize() {
 
 // Prints a horizontal separator line.
 inline void borderLine() {
-    std::cout << GRAY << std::string(90, '-') << RESET << "\n";
+    std::cout << GRAY << std::string(80, '-') << RESET << "\n";
 }
 
 // Prints a 3-column table header for benchmarks with no reference
@@ -154,7 +154,7 @@ inline void setSoloHeader(std::string_view header) {
 
     // clang-format off
     std::cout << std::left << CYAN 
-              << std::setw(30) << prettify(header) 
+              << std::setw(45) << prettify(header) 
               << std::setw(15) << "Iteration" 
               << std::setw(15) << custom 
               << RESET << "\n";
@@ -172,7 +172,7 @@ inline void setSoloHeader(std::string_view header) {
 inline void printSoloRow(std::string_view name, std::string_view iteration, nanoseconds ns) {
     // clang-format off
     std::cout << std::left 
-              << std::setw(30) << prettify(name) 
+              << std::setw(45) << prettify(name) 
               << std::setw(15) << iteration
               << std::setw(15) << formatDuration(ns) 
               << std::setw(20) << "     —" 
@@ -192,19 +192,17 @@ inline void setHeader(std::string_view header) {
 
     // clang-format off
     std::cout << std::left << CYAN 
-              << std::setw(30) << prettify(header) 
+              << std::setw(45) << prettify(header) 
               << std::setw(15) << "Iteration" 
               << std::setw(15) << custom 
-              << std::setw(20) << standard
-              << std::setw(15) << "  Δ" 
               << RESET << "\n";
     // clang-format on
 
     borderLine();
 
     markdown_buffer() += "\n## " + prettify(header) + "\n\n";
-    markdown_buffer() += "| Test | Iteration | " + custom + " | " + standard + " | Δ |\n";
-    markdown_buffer() += "|---|---|---|---|---|\n";
+    markdown_buffer() += "| Test | Iteration | " + custom;
+    markdown_buffer() += "|---|---|---|\n";
 }
 
 // Prints one merged comparison row: name, iteration tier, both durations,
@@ -213,34 +211,17 @@ inline void setHeader(std::string_view header) {
 // faster, gray within the noise threshold. Replaces printing each side
 // as its own separate line.
 inline void printComparisonRow(std::string_view name, std::string_view iteration,
-                               nanoseconds customNs, nanoseconds stdNs) {
-    const double pct =
-        stdNs.count() == 0
-            ? 0.0
-            : (static_cast<double>(stdNs.count()) - static_cast<double>(customNs.count())) /
-                  static_cast<double>(customNs.count()) * 100.0;
-
-    // +-0% treated as measurement noise, not a real signal — see the
-    // Termux big.LITTLE / thermal-throttling discussion.
-    const char* deltaColor = (pct > 0.0) ? GREEN : (pct < 0.0) ? RED : GRAY;
-
-    std::ostringstream deltaStream;
-    deltaStream << std::showpos << std::fixed << std::setprecision(1) << pct << "%";
-
+                               nanoseconds customNs) {
     // clang-format off
     std::cout << std::left 
-              << std::setw(30) << prettify(name) 
+              << std::setw(45) << prettify(name) 
               << std::setw(15) << iteration
               << std::setw(15) << formatDuration(customNs) 
-              << std::setw(20) << formatDuration(stdNs)
-              << deltaColor << deltaStream.str() 
               << RESET << "\n";
 
     markdown_buffer() += "| " + prettify(name) 
                       + " | " + std::string(iteration) 
                       + " | " + formatDuration(customNs) 
-                      + " | " + formatDuration(stdNs) 
-                      + " | " + deltaStream.str() 
                       + " |\n";
     // clang-format on
 }
