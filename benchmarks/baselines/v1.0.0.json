@@ -1,0 +1,695 @@
+[
+  {
+    "suite": "Cache Hit",
+    "operation": "FileCache::get() existing entry",
+    "total_ns": 916077,
+    "iterations": 10000,
+    "ns_per_op": 91.61
+  },
+  {
+    "suite": "Cache Hit",
+    "operation": "FileCache::get() existing entry",
+    "total_ns": 9217539,
+    "iterations": 100000,
+    "ns_per_op": 92.18
+  },
+  {
+    "suite": "Cache Hit",
+    "operation": "FileCache::get() existing entry",
+    "total_ns": 91811077,
+    "iterations": 1000000,
+    "ns_per_op": 91.81
+  },
+  {
+    "suite": "Dispatch",
+    "operation": "Router::dispatch() matching route",
+    "total_ns": 24807923,
+    "iterations": 10000,
+    "ns_per_op": 2480.79
+  },
+  {
+    "suite": "Dispatch",
+    "operation": "Router::dispatch() matching route",
+    "total_ns": 249698538,
+    "iterations": 100000,
+    "ns_per_op": 2496.99
+  },
+  {
+    "suite": "Dispatch",
+    "operation": "Router::dispatch() matching route",
+    "total_ns": 5696770769,
+    "iterations": 1000000,
+    "ns_per_op": 5696.77
+  },
+  {
+    "suite": "Dispatch",
+    "operation": "Router::dispatch() no matching route",
+    "total_ns": 29219615,
+    "iterations": 10000,
+    "ns_per_op": 2921.96
+  },
+  {
+    "suite": "Dispatch",
+    "operation": "Router::dispatch() no matching route",
+    "total_ns": 8807416385,
+    "iterations": 100000,
+    "ns_per_op": 88074.16
+  },
+  {
+    "suite": "Dispatch",
+    "operation": "Router::dispatch() no matching route",
+    "total_ns": 2972413846,
+    "iterations": 1000000,
+    "ns_per_op": 2972.41
+  },
+  {
+    "suite": "Path Match",
+    "operation": "PathMatcher::match() two params",
+    "total_ns": 19262385,
+    "iterations": 10000,
+    "ns_per_op": 1926.24
+  },
+  {
+    "suite": "Path Match",
+    "operation": "PathMatcher::match() two params",
+    "total_ns": 169438846,
+    "iterations": 100000,
+    "ns_per_op": 1694.39
+  },
+  {
+    "suite": "Path Match",
+    "operation": "PathMatcher::match() two params",
+    "total_ns": 1684069231,
+    "iterations": 1000000,
+    "ns_per_op": 1684.07
+  },
+  {
+    "suite": "Body",
+    "operation": "parse() 64 KiB body",
+    "total_ns": 239823615,
+    "iterations": 10000,
+    "ns_per_op": 23982.36
+  },
+  {
+    "suite": "Body",
+    "operation": "parse() 64 KiB body",
+    "total_ns": 2351426846,
+    "iterations": 100000,
+    "ns_per_op": 23514.27
+  },
+  {
+    "suite": "Body",
+    "operation": "parse() 64 KiB body",
+    "total_ns": 24004654386,
+    "iterations": 1000000,
+    "ns_per_op": 24004.65
+  },
+  {
+    "suite": "Body",
+    "operation": "serialize() 64 KiB body",
+    "total_ns": 219139385,
+    "iterations": 10000,
+    "ns_per_op": 21913.94
+  },
+  {
+    "suite": "Body",
+    "operation": "serialize() 64 KiB body",
+    "total_ns": 2266340000,
+    "iterations": 100000,
+    "ns_per_op": 22663.40
+  },
+  {
+    "suite": "Body",
+    "operation": "serialize() 64 KiB body",
+    "total_ns": 22454825924,
+    "iterations": 1000000,
+    "ns_per_op": 22454.83
+  },
+  {
+    "suite": "Cache Put",
+    "operation": "FileCache::put() fresh key",
+    "total_ns": 7347385,
+    "iterations": 10000,
+    "ns_per_op": 734.74
+  },
+  {
+    "suite": "Cache Put",
+    "operation": "FileCache::put() fresh key",
+    "total_ns": 71788615,
+    "iterations": 100000,
+    "ns_per_op": 717.89
+  },
+  {
+    "suite": "Cache Put",
+    "operation": "FileCache::put() fresh key",
+    "total_ns": 725038769,
+    "iterations": 1000000,
+    "ns_per_op": 725.04
+  },
+  {
+    "suite": "Chain Overhead",
+    "operation": "3-middleware chain + handler",
+    "total_ns": 16998154,
+    "iterations": 10000,
+    "ns_per_op": 1699.82
+  },
+  {
+    "suite": "Chain Overhead",
+    "operation": "3-middleware chain + handler",
+    "total_ns": 168975077,
+    "iterations": 100000,
+    "ns_per_op": 1689.75
+  },
+  {
+    "suite": "Chain Overhead",
+    "operation": "3-middleware chain + handler",
+    "total_ns": 1727164692,
+    "iterations": 1000000,
+    "ns_per_op": 1727.16
+  },
+  {
+    "suite": "Cors Overhead",
+    "operation": "Cors::operator() non-preflight",
+    "total_ns": 61099693,
+    "iterations": 10000,
+    "ns_per_op": 6109.97
+  },
+  {
+    "suite": "Cors Overhead",
+    "operation": "Cors::operator() non-preflight",
+    "total_ns": 612867770,
+    "iterations": 100000,
+    "ns_per_op": 6128.68
+  },
+  {
+    "suite": "Cors Overhead",
+    "operation": "Cors::operator() non-preflight",
+    "total_ns": 6258107770,
+    "iterations": 1000000,
+    "ns_per_op": 6258.11
+  },
+  {
+    "suite": "Header",
+    "operation": "parse() 50 headers",
+    "total_ns": 421713846,
+    "iterations": 10000,
+    "ns_per_op": 42171.38
+  },
+  {
+    "suite": "Header",
+    "operation": "parse() 50 headers",
+    "total_ns": 4233750154,
+    "iterations": 100000,
+    "ns_per_op": 42337.50
+  },
+  {
+    "suite": "Header",
+    "operation": "parse() 50 headers",
+    "total_ns": 42620584541,
+    "iterations": 1000000,
+    "ns_per_op": 42620.58
+  },
+  {
+    "suite": "Header",
+    "operation": "serialize() 50 headers",
+    "total_ns": 115159923,
+    "iterations": 10000,
+    "ns_per_op": 11515.99
+  },
+  {
+    "suite": "Header",
+    "operation": "serialize() 50 headers",
+    "total_ns": 1109190461,
+    "iterations": 100000,
+    "ns_per_op": 11091.90
+  },
+  {
+    "suite": "Header",
+    "operation": "serialize() 50 headers",
+    "total_ns": 11249581924,
+    "iterations": 1000000,
+    "ns_per_op": 11249.58
+  },
+  {
+    "suite": "Request Line",
+    "operation": "parse() minimal request line",
+    "total_ns": 34569462,
+    "iterations": 10000,
+    "ns_per_op": 3456.95
+  },
+  {
+    "suite": "Request Line",
+    "operation": "parse() minimal request line",
+    "total_ns": 347811923,
+    "iterations": 100000,
+    "ns_per_op": 3478.12
+  },
+  {
+    "suite": "Request Line",
+    "operation": "parse() minimal request line",
+    "total_ns": 3500684847,
+    "iterations": 1000000,
+    "ns_per_op": 3500.68
+  },
+  {
+    "suite": "Connection Move",
+    "operation": "Connection create + move construction",
+    "total_ns": 905529231,
+    "iterations": 10000,
+    "ns_per_op": 90552.92
+  },
+  {
+    "suite": "Connection Move",
+    "operation": "Connection create + move construction",
+    "total_ns": 9247613231,
+    "iterations": 100000,
+    "ns_per_op": 92476.13
+  },
+  {
+    "suite": "Connection Move",
+    "operation": "Connection create + move construction",
+    "total_ns": 92231212851,
+    "iterations": 1000000,
+    "ns_per_op": 92231.21
+  },
+  {
+    "suite": "Server Construction",
+    "operation": "Server construction, 4 threads",
+    "total_ns": 2320696308,
+    "iterations": 10000,
+    "ns_per_op": 232069.63
+  },
+  {
+    "suite": "Server Construction",
+    "operation": "Server construction, 4 threads",
+    "total_ns": 19431156309,
+    "iterations": 100000,
+    "ns_per_op": 194311.56
+  },
+  {
+    "suite": "Server Construction",
+    "operation": "Server construction, 4 threads",
+    "total_ns": 220901134782,
+    "iterations": 1000000,
+    "ns_per_op": 220901.13
+  },
+  {
+    "suite": "Socket Construction",
+    "operation": "Socket::createTcp() + close()",
+    "total_ns": 940515154,
+    "iterations": 10000,
+    "ns_per_op": 94051.52
+  },
+  {
+    "suite": "Socket Construction",
+    "operation": "Socket::createTcp() + close()",
+    "total_ns": 9449988078,
+    "iterations": 100000,
+    "ns_per_op": 94499.88
+  },
+  {
+    "suite": "Socket Construction",
+    "operation": "Socket::createTcp() + close()",
+    "total_ns": 96591403698,
+    "iterations": 1000000,
+    "ns_per_op": 96591.40
+  },
+  {
+    "suite": "Header Count Growth",
+    "operation": "parse() 5 headers",
+    "total_ns": 69002846,
+    "iterations": 10000,
+    "ns_per_op": 6900.28
+  },
+  {
+    "suite": "Header Count Growth",
+    "operation": "parse() 5 headers",
+    "total_ns": 602479077,
+    "iterations": 100000,
+    "ns_per_op": 6024.79
+  },
+  {
+    "suite": "Header Count Growth",
+    "operation": "parse() 5 headers",
+    "total_ns": 6002433616,
+    "iterations": 1000000,
+    "ns_per_op": 6002.43
+  },
+  {
+    "suite": "Header Count Growth",
+    "operation": "parse() 25 headers",
+    "total_ns": 247598077,
+    "iterations": 10000,
+    "ns_per_op": 24759.81
+  },
+  {
+    "suite": "Header Count Growth",
+    "operation": "parse() 25 headers",
+    "total_ns": 2472167385,
+    "iterations": 100000,
+    "ns_per_op": 24721.67
+  },
+  {
+    "suite": "Header Count Growth",
+    "operation": "parse() 25 headers",
+    "total_ns": 24196338847,
+    "iterations": 1000000,
+    "ns_per_op": 24196.34
+  },
+  {
+    "suite": "Header Count Growth",
+    "operation": "parse() 100 headers",
+    "total_ns": 916683154,
+    "iterations": 10000,
+    "ns_per_op": 91668.32
+  },
+  {
+    "suite": "Header Count Growth",
+    "operation": "parse() 100 headers",
+    "total_ns": 9166820078,
+    "iterations": 100000,
+    "ns_per_op": 91668.20
+  },
+  {
+    "suite": "Header Count Growth",
+    "operation": "parse() 100 headers",
+    "total_ns": 1136361959222,
+    "iterations": 1000000,
+    "ns_per_op": 1136361.96
+  },
+  {
+    "suite": "Header Count Growth",
+    "operation": "parse() 500 headers",
+    "total_ns": 4228630693,
+    "iterations": 10000,
+    "ns_per_op": 422863.07
+  },
+  {
+    "suite": "Header Count Growth",
+    "operation": "parse() 500 headers",
+    "total_ns": 43015920387,
+    "iterations": 100000,
+    "ns_per_op": 430159.20
+  },
+  {
+    "suite": "Header Count Growth",
+    "operation": "parse() 500 headers",
+    "total_ns": 419353727179,
+    "iterations": 1000000,
+    "ns_per_op": 419353.73
+  },
+  {
+    "suite": "Middleware Chain Growth",
+    "operation": "chain length 1",
+    "total_ns": 16344307,
+    "iterations": 10000,
+    "ns_per_op": 1634.43
+  },
+  {
+    "suite": "Middleware Chain Growth",
+    "operation": "chain length 1",
+    "total_ns": 163689538,
+    "iterations": 100000,
+    "ns_per_op": 1636.90
+  },
+  {
+    "suite": "Middleware Chain Growth",
+    "operation": "chain length 1",
+    "total_ns": 1684251308,
+    "iterations": 1000000,
+    "ns_per_op": 1684.25
+  },
+  {
+    "suite": "Middleware Chain Growth",
+    "operation": "chain length 5",
+    "total_ns": 19133539,
+    "iterations": 10000,
+    "ns_per_op": 1913.35
+  },
+  {
+    "suite": "Middleware Chain Growth",
+    "operation": "chain length 5",
+    "total_ns": 186269846,
+    "iterations": 100000,
+    "ns_per_op": 1862.70
+  },
+  {
+    "suite": "Middleware Chain Growth",
+    "operation": "chain length 5",
+    "total_ns": 1807195308,
+    "iterations": 1000000,
+    "ns_per_op": 1807.20
+  },
+  {
+    "suite": "Middleware Chain Growth",
+    "operation": "chain length 20",
+    "total_ns": 22642385,
+    "iterations": 10000,
+    "ns_per_op": 2264.24
+  },
+  {
+    "suite": "Middleware Chain Growth",
+    "operation": "chain length 20",
+    "total_ns": 233089231,
+    "iterations": 100000,
+    "ns_per_op": 2330.89
+  },
+  {
+    "suite": "Middleware Chain Growth",
+    "operation": "chain length 20",
+    "total_ns": 2514382462,
+    "iterations": 1000000,
+    "ns_per_op": 2514.38
+  },
+  {
+    "suite": "Middleware Chain Growth",
+    "operation": "chain length 50",
+    "total_ns": 35868539,
+    "iterations": 10000,
+    "ns_per_op": 3586.85
+  },
+  {
+    "suite": "Middleware Chain Growth",
+    "operation": "chain length 50",
+    "total_ns": 408685231,
+    "iterations": 100000,
+    "ns_per_op": 4086.85
+  },
+  {
+    "suite": "Middleware Chain Growth",
+    "operation": "chain length 50",
+    "total_ns": 3797287385,
+    "iterations": 1000000,
+    "ns_per_op": 3797.29
+  },
+  {
+    "suite": "Route Table Growth",
+    "operation": "dispatch() last of 10 routes",
+    "total_ns": 28771077,
+    "iterations": 10000,
+    "ns_per_op": 2877.11
+  },
+  {
+    "suite": "Route Table Growth",
+    "operation": "dispatch() last of 10 routes",
+    "total_ns": 346528846,
+    "iterations": 100000,
+    "ns_per_op": 3465.29
+  },
+  {
+    "suite": "Route Table Growth",
+    "operation": "dispatch() last of 10 routes",
+    "total_ns": 3026945231,
+    "iterations": 1000000,
+    "ns_per_op": 3026.95
+  },
+  {
+    "suite": "Route Table Growth",
+    "operation": "dispatch() last of 100 routes",
+    "total_ns": 215971692,
+    "iterations": 10000,
+    "ns_per_op": 21597.17
+  },
+  {
+    "suite": "Route Table Growth",
+    "operation": "dispatch() last of 100 routes",
+    "total_ns": 2528399384,
+    "iterations": 100000,
+    "ns_per_op": 25283.99
+  },
+  {
+    "suite": "Route Table Growth",
+    "operation": "dispatch() last of 100 routes",
+    "total_ns": 21549550848,
+    "iterations": 1000000,
+    "ns_per_op": 21549.55
+  },
+  {
+    "suite": "Route Table Growth",
+    "operation": "dispatch() last of 500 routes",
+    "total_ns": 950317154,
+    "iterations": 10000,
+    "ns_per_op": 95031.72
+  },
+  {
+    "suite": "Route Table Growth",
+    "operation": "dispatch() last of 500 routes",
+    "total_ns": 9745653924,
+    "iterations": 100000,
+    "ns_per_op": 97456.54
+  },
+  {
+    "suite": "Route Table Growth",
+    "operation": "dispatch() last of 500 routes",
+    "total_ns": 98648905545,
+    "iterations": 1000000,
+    "ns_per_op": 98648.91
+  },
+  {
+    "suite": "Route Table Growth",
+    "operation": "dispatch() last of 2000 routes",
+    "total_ns": 3712129846,
+    "iterations": 10000,
+    "ns_per_op": 371212.98
+  },
+  {
+    "suite": "Route Table Growth",
+    "operation": "dispatch() last of 2000 routes",
+    "total_ns": 37899917772,
+    "iterations": 100000,
+    "ns_per_op": 378999.18
+  },
+  {
+    "suite": "Route Table Growth",
+    "operation": "dispatch() last of 2000 routes",
+    "total_ns": 2100397462049,
+    "iterations": 1000000,
+    "ns_per_op": 2100397.46
+  },
+  {
+    "suite": "Method Convert",
+    "operation": "methodFromString() "GET" (best case)",
+    "total_ns": 125462,
+    "iterations": 10000,
+    "ns_per_op": 12.55
+  },
+  {
+    "suite": "Method Convert",
+    "operation": "methodFromString() "GET" (best case)",
+    "total_ns": 1336385,
+    "iterations": 100000,
+    "ns_per_op": 13.36
+  },
+  {
+    "suite": "Method Convert",
+    "operation": "methodFromString() "GET" (best case)",
+    "total_ns": 12545615,
+    "iterations": 1000000,
+    "ns_per_op": 12.55
+  },
+  {
+    "suite": "Method Convert",
+    "operation": "methodFromString() "OPTIONS" (worst case)",
+    "total_ns": 291308,
+    "iterations": 10000,
+    "ns_per_op": 29.13
+  },
+  {
+    "suite": "Method Convert",
+    "operation": "methodFromString() "OPTIONS" (worst case)",
+    "total_ns": 2955384,
+    "iterations": 100000,
+    "ns_per_op": 29.55
+  },
+  {
+    "suite": "Method Convert",
+    "operation": "methodFromString() "OPTIONS" (worst case)",
+    "total_ns": 29212538,
+    "iterations": 1000000,
+    "ns_per_op": 29.21
+  },
+  {
+    "suite": "Method Convert",
+    "operation": "methodToString() Get",
+    "total_ns": 55769,
+    "iterations": 10000,
+    "ns_per_op": 5.58
+  },
+  {
+    "suite": "Method Convert",
+    "operation": "methodToString() Get",
+    "total_ns": 620923,
+    "iterations": 100000,
+    "ns_per_op": 6.21
+  },
+  {
+    "suite": "Method Convert",
+    "operation": "methodToString() Get",
+    "total_ns": 6285923,
+    "iterations": 1000000,
+    "ns_per_op": 6.29
+  },
+  {
+    "suite": "Mime Lookup",
+    "operation": "mimeTypeFromExtension() known extension",
+    "total_ns": 153461,
+    "iterations": 10000,
+    "ns_per_op": 15.35
+  },
+  {
+    "suite": "Mime Lookup",
+    "operation": "mimeTypeFromExtension() known extension",
+    "total_ns": 1517923,
+    "iterations": 100000,
+    "ns_per_op": 15.18
+  },
+  {
+    "suite": "Mime Lookup",
+    "operation": "mimeTypeFromExtension() known extension",
+    "total_ns": 15315693,
+    "iterations": 1000000,
+    "ns_per_op": 15.32
+  },
+  {
+    "suite": "Mime Lookup",
+    "operation": "mimeTypeFromExtension() unknown extension",
+    "total_ns": 110538,
+    "iterations": 10000,
+    "ns_per_op": 11.05
+  },
+  {
+    "suite": "Mime Lookup",
+    "operation": "mimeTypeFromExtension() unknown extension",
+    "total_ns": 1103923,
+    "iterations": 100000,
+    "ns_per_op": 11.04
+  },
+  {
+    "suite": "Mime Lookup",
+    "operation": "mimeTypeFromExtension() unknown extension",
+    "total_ns": 11163000,
+    "iterations": 1000000,
+    "ns_per_op": 11.16
+  },
+  {
+    "suite": "Url Decode",
+    "operation": "UrlDecoder::decode() mixed encoding",
+    "total_ns": 15965616,
+    "iterations": 10000,
+    "ns_per_op": 1596.56
+  },
+  {
+    "suite": "Url Decode",
+    "operation": "UrlDecoder::decode() mixed encoding",
+    "total_ns": 158885846,
+    "iterations": 100000,
+    "ns_per_op": 1588.86
+  },
+  {
+    "suite": "Url Decode",
+    "operation": "UrlDecoder::decode() mixed encoding",
+    "total_ns": 1603159077,
+    "iterations": 1000000,
+    "ns_per_op": 1603.16
+  }
+]

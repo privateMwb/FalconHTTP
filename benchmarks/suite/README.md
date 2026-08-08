@@ -31,8 +31,7 @@ cached entry.
 ### Benchmarks
 
 - `path_match.cpp` — `PathMatcher::match()` against a fixed pattern
-- `dispatch_hit.cpp` — `Router::dispatch()` on a matching method + path
-- `dispatch_miss.cpp` — `Router::dispatch()` on a path with no matching route
+- `dispatch.cpp` — `Router::dispatch()` on a matching method + path, and on a path with no matching route
 - `cache_hit.cpp` — `FileCache::get()` on an existing entry
 
 ---
@@ -46,10 +45,8 @@ middleware chain, and writing into the cache.
 ### Benchmarks
 
 - `request_line.cpp` — `HttpParser::parse()`, minimal request line + headers
-- `header_heavy.cpp` — `HttpParser::parse()`, many headers
-- `body_heavy.cpp` — `HttpParser::parse()`, large body
-- `header_output.cpp` — `HttpSerializer::serialize()`, many headers
-- `body_output.cpp` — `HttpSerializer::serialize()`, large body
+- `header.cpp` — `HttpParser::parse()` and `HttpSerializer::serialize()`, many headers
+- `body.cpp` — `HttpParser::parse()` and `HttpSerializer::serialize()`, large body
 - `cache_put.cpp` — `FileCache::put()` insert
 - `chain_overhead.cpp` — full middleware chain execution per request
 - `cors_overhead.cpp` — `Cors` middleware execution alone
