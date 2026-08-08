@@ -10,15 +10,15 @@
 // alone.
 //
 // Covers:
-// - methodFromString() on "GET" (checked first, best case)
-// - methodFromString() on "OPTIONS" (checked last, worst case)
+// - methodFromString() on GET (checked first, best case)
+// - methodFromString() on OPTIONS (checked last, worst case)
 // - methodToString() on HttpMethod::Get
 
 #include <support/framework.h>
 
 using namespace FalconHTTP::HTTP;
 
-// Measures methodFromString() on "GET" - the first method checked,
+// Measures methodFromString() on GET - the first method checked,
 // so this is the best-case comparison chain cost.
 static void bench_method_from_string_best_case() {
     auto f = [&] {
@@ -29,7 +29,7 @@ static void bench_method_from_string_best_case() {
     BENCH("methodFromString() GET (best case)", f);
 }
 
-// Measures methodFromString() on "OPTIONS" - the last method checked,
+// Measures methodFromString() on OPTIONS - the last method checked,
 // so this is the worst-case comparison chain cost.
 static void bench_method_from_string_worst_case() {
     auto f = [&] {
