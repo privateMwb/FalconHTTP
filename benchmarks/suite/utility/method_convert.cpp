@@ -26,7 +26,7 @@ static void bench_method_from_string_best_case() {
         (void)method;
     };
 
-    BENCH("methodFromString() \"GET\" (best case)", f);
+    BENCH("methodFromString() GET (best case)", f);
 }
 
 // Measures methodFromString() on "OPTIONS" - the last method checked,
@@ -37,7 +37,7 @@ static void bench_method_from_string_worst_case() {
         (void)method;
     };
 
-    BENCH("methodFromString() \"OPTIONS\" (worst case)", f);
+    BENCH("methodFromString() OPTIONS (worst case)", f);
 }
 
 // Measures methodToString() on HttpMethod::Get.
