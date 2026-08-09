@@ -16,10 +16,16 @@
 #include <string>
 #include <thread>
 
+#ifdef _WIN32
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#pragma comment(lib, "ws2_32.lib")
+#else
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#endif
 
 using namespace FalconHTTP::Core;
 using namespace FalconHTTP::HTTP;
@@ -27,8 +33,35 @@ using namespace FalconHTTP::Routing;
 
 namespace {
 
+#ifdef _WIN32
+using SocketHandle = SOCKET;
+constexpr SocketHandle kInvalidSocket = INVALID_SOCKET;
+
+struct WinsockGuard {
+    WinsockGuard() {
+        WSADATA data;
+        WSAStartup(MAKEWORD(2, 2), &data);
+    }
+    ~WinsockGuard() {
+        WSACleanup();
+    }
+};
+const WinsockGuard winsockGuard;
+
+void closeSocket(SocketHandle fd) {
+    ::closesocket(fd);
+}
+#else
+using SocketHandle = int;
+constexpr SocketHandle kInvalidSocket = -1;
+
+void closeSocket(SocketHandle fd) {
+    ::close(fd);
+}
+#endif
+
 std::string sendRawRequest(uint16_t port, const std::string& raw) {
-    int fd = ::socket(AF_INET, SOCK_STREAM, 0);
+    SocketHandle fd = ::socket(AF_INET, SOCK_STREAM, 0);
 
     sockaddr_in addr{};
     addr.sin_family = AF_INET;
@@ -36,16 +69,16 @@ std::string sendRawRequest(uint16_t port, const std::string& raw) {
     inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
 
     ::connect(fd, reinterpret_cast<sockaddr*>(&addr), sizeof(addr));
-    ::send(fd, raw.data(), raw.size(), 0);
+    ::send(fd, raw.data(), static_cast<int>(raw.size()), 0);
 
     std::string response;
     char buffer[4096];
-    ssize_t n;
+    int n;
     while ((n = ::recv(fd, buffer, sizeof(buffer), 0)) > 0) {
         response.append(buffer, static_cast<std::size_t>(n));
     }
 
-    ::close(fd);
+    closeSocket(fd);
     return response;
 }
 

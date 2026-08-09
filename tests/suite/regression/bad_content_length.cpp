@@ -13,6 +13,17 @@
 #include <string>
 #include <thread>
 
+#ifdef _WIN32
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#pragma comment(lib, "ws2_32.lib")
+#else
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#endif
+
 using namespace FalconHTTP::Core;
 using namespace FalconHTTP::HTTP;
 using namespace FalconHTTP::Routing;
