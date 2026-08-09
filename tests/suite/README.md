@@ -1,132 +1,107 @@
-// Regression test: a request whose header block exceeds
-// ServerConfig::maxHeaderSize before the terminating CRLFCRLF is
-// found must be rejected with 431 Request Header Fields Too Large.
-//
-// The original issue: same DoS class as oversized_body_rejected.cpp,
-// but on the header side - Server had no cap on how much it would
-// accumulate while still searching for the blank line terminating the
-// headers, so a client that never sends one could grow the buffer
-// unboundedly. Fixed by checking the accumulated buffer size against
-// maxHeaderSize_ on each iteration of that wait loop.
-//
-// SCOPE: see connection_close_sent.cpp for why this needs a live
-// Server and raw POSIX client code, and the fixed-port caveat (this
-// file uses a different port to avoid colliding with the other two
-// live-server regression tests if all three run in the same process).
+# Test Suite
 
-#include <support/framework.h>
+This document describes the test categories under `suite/` — what each
+one verifies, and the individual test files it contains.
 
-// clang-format off
-#include <thread>  // std::thread
-#include <chrono>  // std::chrono::milliseconds
-#include <string>  // std::string
+Unlike the benchmark suite, tests validate the library's own
+correctness directly — there is no reference implementation to compare
+against, so results are simply pass or fail.
 
-#include <sys/socket.h> // socket, connect, send, recv
-#include <netinet/in.h> // sockaddr_in
-#include <arpa/inet.h>  // inet_pton, htons
-#include <unistd.h>     // close
-// clang-format on
+Every test suite registers itself automatically via
+`REGISTER_TEST_SUITE()` at startup, and is assigned a sequential id
+within its category (e.g. `U1`, `U2` for Unit; `L1`, `L2` for
+Lifecycle) — there's no suite list to maintain by hand. This applies
+uniformly across every category below.
 
-using namespace FalconHTTP::Core;
-using namespace FalconHTTP::Routing;
-using namespace FalconHTTP::HTTP;
-using namespace FalconHTTP::Config;
+---
 
-namespace {
+## Concurrency
 
-    constexpr uint16_t TestPort = 18475;
+Verifies thread-safety — Server dispatches requests onto a thread
+pool, so multiple requests can be in flight on different threads at
+once. Covers shared state accessed from those threads: the mutex-
+guarded log writes, and FileCache.
 
-    // See connection_close_sent.cpp for details on this helper.
-    std::string sendRawRequest(uint16_t port, const std::string& request) {
-        int fd = ::socket(AF_INET, SOCK_STREAM, 0);
-        if (fd < 0) return {};
+### Tests
 
-        sockaddr_in addr{};
-        addr.sin_family = AF_INET;
-        addr.sin_port   = htons(port);
-        ::inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
+- `logger_thread_safety.cpp` — Concurrent requests logging simultaneously don't interleave/garble stdout output
+- `recovery_thread_safety.cpp` — Concurrent exceptions caught by Recovery don't interleave stderr output
+- `filecache_concurrent_access.cpp` — Concurrent get()/put() from multiple threads stay correct
+- `pool_concurrent_requests.cpp` — Many simultaneous connections handled correctly by the thread pool, no cross-request state leakage
 
-        if (::connect(fd, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) != 0) {
-            ::close(fd);
-            return {};
-        }
+---
 
-        ::send(fd, request.data(), request.size(), 0);
+## Integration
 
-        std::string response;
-        char buffer[4096];
-        ssize_t n;
-        while ((n = ::recv(fd, buffer, sizeof(buffer), 0)) > 0) {
-            response.append(buffer, static_cast<std::size_t>(n));
-        }
+Verifies multiple components working together end-to-end — for
+example, a full parse-route-serialize round trip — rather than a
+single function in isolation.
 
-        ::close(fd);
-        return response;
-    }
+### Tests
 
-} // namespace
+- `parse_dispatch_respond.cpp` — Full raw-bytes-in to serialized-response-out round trip through HttpParser → Router → HttpSerializer
+- `middleware_chain_order.cpp` — Registered middleware runs in onion-model order around the route handler
+- `cors_preflight_flow.cpp` — OPTIONS request short-circuits the chain and returns 204 without reaching the handler
+- `static_file_roundtrip.cpp` — Static file request resolves, caches, and serves with the correct Content-Type end-to-end
+- `route_param_extraction.cpp` — Path pattern match populates the path params the handler actually receives
+- `empty_request.cpp` — A connection that sends no data at all closes cleanly without hanging the server
+- `header_disconnect.cpp` — A client disconnecting mid-header-block closes cleanly without hanging the server
+- `body_disconnect.cpp` — A client disconnecting mid-body closes cleanly without hanging the server
+- `parse_exception.cpp` — A request HttpParser::parse() can't parse is caught and reported as 500, not a crash
 
-// Verifies a header block larger than the configured maxHeaderSize,
-// sent without ever completing the terminating blank line, is
-// rejected with 431.
-static void oversized_unterminated_headers_are_rejected_with_431() {
-    ServerConfig config;
-    config.maxHeaderSize = 64; // tiny cap to keep the test fast
+---
 
-    Router router;
-    router.get("/x", [](const HttpRequest&, HttpResponse& response) {
-        response.setStatus(HttpStatus::Ok);
-    });
+## Lifecycle
 
-    Server server(router, config);
-    CHK(server.start(TestPort));
+Verifies object lifetime operations — construction, destruction, and
+moving — across the RAII wrappers around native OS resources (socket
+handles) and the Server's start/run/stop state machine.
 
-    std::thread runner([&server]() { server.run(); });
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+### Tests
 
-    // Well over 64 bytes, and deliberately never terminated with the
-    // blank line that would end the header block.
-    std::string request = "GET /x HTTP/1.1\r\nX-Pad: " + std::string(200, 'a') + "\r\n";
+- `socket_raii.cpp` — Socket construction, move, close, and destructor release the handle correctly
+- `connection_raii.cpp` — Connection construction, move, and close behave correctly across the underlying Socket
+- `listener_bind_close.cpp` — Listener start/stop/isListening across repeated bind cycles
+- `server_start_stop.cpp` — Server start/run/stop and isRunning() transitions
+- `config_constructor.cpp` — Server(Router&, const ServerConfig&) constructs correctly, and no-arg start() reuses the port it set
 
-    std::string response = sendRawRequest(TestPort, request);
+---
 
-    server.stop();
-    runner.join();
+## Regression
 
-    CHK(response.starts_with("HTTP/1.1 431"));
-}
+Verifies that a specific, previously fixed bug stays fixed. One test
+per resolved issue, added at the time the fix lands.
 
-// Verifies a normal, small request under the configured maxHeaderSize
-// is accepted normally - the cap must not be overly aggressive.
-static void small_header_block_is_accepted() {
-    ServerConfig config;
-    config.maxHeaderSize = 64;
+### Tests
 
-    Router router;
-    router.get("/x", [](const HttpRequest&, HttpResponse& response) {
-        response.setStatus(HttpStatus::Ok);
-        response.setBody("fine");
-    });
+- `body_offset_fix.cpp` — bodyStart must be headerEnd + 4, not headerEnd overwritten to 4 (truncated-body bug)
+- `send_error_reported.cpp` — sendAll() must not report a socket error as success (unsigned-underflow bug)
+- `header_case_lookup.cpp` — "Content-Type" and "content-type" must resolve to the same header
+- `oversized_body_rejected.cpp` — Content-Length beyond maxBodySize is rejected with 413, not read into memory
+- `oversized_header_rejected.cpp` — Header block beyond maxHeaderSize is rejected with 431 before the body read begins
+- `bad_content_length.cpp` — A Content-Length std::from_chars can't fully parse is rejected with 400, not silently treated as 0
+- `method_not_allowed.cpp` — Path matches a route but wrong method returns 405, not 404
+- `connection_close_sent.cpp` — Every response includes Connection: close, since keep-alive isn't implemented
+- `duplicate_header_fix.cpp` — User-set Content-Length/Connection headers don't get emitted twice
 
-    Server server(router, config);
-    CHK(server.start(TestPort));
+---
 
-    std::thread runner([&server]() { server.run(); });
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+## Unit
 
-    std::string response = sendRawRequest(TestPort, "GET /x HTTP/1.1\r\nHost: h\r\n\r\n");
+Verifies individual functions or methods in isolation — the smallest
+testable unit of behavior, independent of the categories above.
 
-    server.stop();
-    runner.join();
+### Tests
 
-    CHK(response.starts_with("HTTP/1.1 200 OK\r\n"));
-    CHK(response.ends_with("fine"));
-}
-
-// Executes all oversized-header regression test cases.
-static void run_tests() {
-    RUN(oversized_unterminated_headers_are_rejected_with_431);
-    RUN(small_header_block_is_accepted);
-}
-
-REGISTER_TEST_SUITE();
+- `url_decode.cpp` — UrlDecoder::decode() percent-decoding and +-as-space
+- `path_match.cpp` — PathMatcher::match() segment matching and :param extraction
+- `http_method.cpp` — methodFromString()/methodToString() conversions
+- `http_status.cpp` — statusReasonPhrase() lookup across all codes
+- `mime_lookup.cpp` — mimeTypeFromExtension() known and unknown extensions
+- `request_headers.cpp` — HttpRequest header set/get, case-insensitive lookup
+- `response_headers.cpp` — HttpResponse header set/get, case-insensitive lookup
+- `request_params.cpp` — Query and path parameter set/get
+- `response_json.cpp` — setJson() body and Content-Type behavior
+- `serializer_output.cpp` — HttpSerializer::serialize() status line, headers, and body assembly
+- `socket_options.cpp` — setReuseAddr()/setNonBlocking()/setNoDelay()
+- `router_registration.cpp` — get()/post()/put()/del() registration and dispatch matching
