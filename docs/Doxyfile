@@ -11,7 +11,7 @@
 # ============================================================
 
 PROJECT_NAME            = "FalconHTTP"
-PROJECT_BRIEF           = "High-performance, header-only LRU cache with O(1) get/put/evict, backed by a pool-allocated intrusive list and hash table."
+PROJECT_BRIEF           = "Embedded C++ HTTP server library built on this project's own container, caching, concurrency, JSON, and function-wrapper libraries."
 
 OUTPUT_DIRECTORY        = .
 
