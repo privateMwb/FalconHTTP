@@ -186,7 +186,7 @@ inline std::string latestBaseline() {
 
 // Prints a horizontal separator line.
 inline void borderLine() {
-    std::cout << GRAY << std::string(70, '-') << RESET << "\n";
+    std::cout << GRAY << std::string(90, '-') << RESET << "\n";
 }
 
 // Prints a section header row and starts the matching markdown table.
