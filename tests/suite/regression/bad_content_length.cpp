@@ -9,9 +9,9 @@
 
 #include <support/framework.h>
 
+#include <chrono>
 #include <string>
 #include <thread>
-#include <chrono>
 
 using namespace FalconHTTP::Core;
 using namespace FalconHTTP::HTTP;
@@ -24,17 +24,26 @@ using SocketHandle = SOCKET;
 constexpr SocketHandle kInvalidSocket = INVALID_SOCKET;
 
 struct WinsockGuard {
-    WinsockGuard() { WSADATA data; WSAStartup(MAKEWORD(2, 2), &data); }
-    ~WinsockGuard() { WSACleanup(); }
+    WinsockGuard() {
+        WSADATA data;
+        WSAStartup(MAKEWORD(2, 2), &data);
+    }
+    ~WinsockGuard() {
+        WSACleanup();
+    }
 };
 const WinsockGuard winsockGuard;
 
-void closeSocket(SocketHandle fd) { ::closesocket(fd); }
+void closeSocket(SocketHandle fd) {
+    ::closesocket(fd);
+}
 #else
 using SocketHandle = int;
 constexpr SocketHandle kInvalidSocket = -1;
 
-void closeSocket(SocketHandle fd) { ::close(fd); }
+void closeSocket(SocketHandle fd) {
+    ::close(fd);
+}
 #endif
 
 std::string sendRawRequest(uint16_t port, const std::string& raw) {
@@ -78,11 +87,10 @@ static void rejects_non_numeric_content_length() {
     std::thread serverThread([&server]() { server.run(); });
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
-    std::string request =
-        "POST /echo HTTP/1.1\r\n"
-        "Host: h\r\n"
-        "Content-Length: abc\r\n"
-        "\r\n";
+    std::string request = "POST /echo HTTP/1.1\r\n"
+                          "Host: h\r\n"
+                          "Content-Length: abc\r\n"
+                          "\r\n";
 
     std::string response = sendRawRequest(port, request);
     CHK(response.find("400") != std::string::npos);
