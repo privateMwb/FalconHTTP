@@ -15,6 +15,7 @@ static void returns_common_reason_phrases() {
     CHK(statusReasonPhrase(HttpStatus::Ok) == "OK");
     CHK(statusReasonPhrase(HttpStatus::Created) == "Created");
     CHK(statusReasonPhrase(HttpStatus::NoContent) == "No Content");
+    CHK(statusReasonPhrase(HttpStatus::Found) == "Found");
     CHK(statusReasonPhrase(HttpStatus::BadRequest) == "Bad Request");
     CHK(statusReasonPhrase(HttpStatus::Unauthorized) == "Unauthorized");
     CHK(statusReasonPhrase(HttpStatus::Forbidden) == "Forbidden");
