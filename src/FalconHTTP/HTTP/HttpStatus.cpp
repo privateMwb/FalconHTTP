@@ -18,6 +18,8 @@ std::string_view statusReasonPhrase(HttpStatus status) noexcept {
         return "Created";
     case HttpStatus::NoContent:
         return "No Content";
+    case HttpStatus::Found:
+        return "Found";
     case HttpStatus::BadRequest:
         return "Bad Request";
     case HttpStatus::Unauthorized:
