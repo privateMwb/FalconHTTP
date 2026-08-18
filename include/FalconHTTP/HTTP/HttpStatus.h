@@ -56,6 +56,9 @@ enum class HttpStatus {
     /// plus header block exceeds ServerConfig::maxHeaderSize before
     /// the terminating CRLFCRLF was found.
     RequestHeaderFieldsTooLarge = 431,
+    /// Returned by RateLimiterMiddleware when a client exceeds its
+    /// configured request quota for the current window.
+    TooManyRequests = 429,
     InternalServerError = 500,
     NotImplemented = 501
 };

@@ -31,6 +31,12 @@ static void returns_dispatch_and_cap_phrases() {
         "Request Header Fields Too Large");
 }
 
+// Verifies the code tied to RateLimiterMiddleware's rate-limit
+// short-circuit returns its correct phrase.
+static void returns_rate_limit_phrase() {
+    CHK(statusReasonPhrase(HttpStatus::TooManyRequests) == "Too Many Requests");
+}
+
 // Verifies the 5xx codes return their standard phrases.
 static void returns_server_error_phrases() {
     CHK(statusReasonPhrase(HttpStatus::InternalServerError) == "Internal Server Error");
@@ -41,6 +47,7 @@ static void returns_server_error_phrases() {
 static void run_tests() {
     RUN(returns_common_reason_phrases);
     RUN(returns_dispatch_and_cap_phrases);
+    RUN(returns_rate_limit_phrase);
     RUN(returns_server_error_phrases);
 }
 

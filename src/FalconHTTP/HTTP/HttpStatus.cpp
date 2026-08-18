@@ -34,6 +34,8 @@ std::string_view statusReasonPhrase(HttpStatus status) noexcept {
         return "Payload Too Large";
     case HttpStatus::RequestHeaderFieldsTooLarge:
         return "Request Header Fields Too Large";
+    case HttpStatus::TooManyRequests:
+        return "Too Many Requests";
     case HttpStatus::InternalServerError:
         return "Internal Server Error";
     case HttpStatus::NotImplemented:
