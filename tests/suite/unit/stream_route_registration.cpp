@@ -24,9 +24,8 @@ static void stream_route_is_matched() {
     Router router;
     bool handlerRan = false;
 
-    router.stream("/events", [&handlerRan](const HttpRequest&, SseConnection&) {
-        handlerRan = true;
-    });
+    router.stream("/events",
+                  [&handlerRan](const HttpRequest&, SseConnection&) { handlerRan = true; });
 
     HttpRequest request;
     request.setMethod(HttpMethod::Get);

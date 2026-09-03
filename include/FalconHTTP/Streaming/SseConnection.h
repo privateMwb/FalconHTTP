@@ -80,10 +80,9 @@ class SseConnection {
      *          no-op - construction itself never throws or reports
      *          failure other than through isConnected().
      */
-    explicit SseConnection(
-        Core::Connection connection,
-        const HashMapPro::HashMap<std::string, std::string>& extraHeaders =
-            HashMapPro::HashMap<std::string, std::string>()) noexcept;
+    explicit SseConnection(Core::Connection connection,
+                           const HashMapPro::HashMap<std::string, std::string>& extraHeaders =
+                               HashMapPro::HashMap<std::string, std::string>()) noexcept;
 
     /// Closes the underlying connection, if still open.
     ~SseConnection() noexcept = default;

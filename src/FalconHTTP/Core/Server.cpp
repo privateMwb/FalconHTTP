@@ -244,8 +244,8 @@ void Server::handleConnection(Connection connection) {
     connection.close();
 }
 
-bool Server::runChain(std::size_t index, HTTP::HttpRequest& request,
-                      HTTP::HttpResponse& response, Connection& connection) const {
+bool Server::runChain(std::size_t index, HTTP::HttpRequest& request, HTTP::HttpResponse& response,
+                      Connection& connection) const {
     if (index >= middleware_.size()) {
         if (const Routing::StreamHandler* streamHandler = router_->matchStream(request)) {
             if (activeStreams_.fetch_add(1, std::memory_order_relaxed) >=
@@ -258,7 +258,9 @@ bool Server::runChain(std::size_t index, HTTP::HttpRequest& request,
 
             struct ActiveStreamGuard {
                 std::atomic<std::size_t>& count;
-                ~ActiveStreamGuard() { count.fetch_sub(1, std::memory_order_relaxed); }
+                ~ActiveStreamGuard() {
+                    count.fetch_sub(1, std::memory_order_relaxed);
+                }
             } guard{activeStreams_};
 
             Streaming::SseConnection sse(std::move(connection), response.headers());
@@ -280,11 +282,10 @@ bool Server::runChain(std::size_t index, HTTP::HttpRequest& request,
 
     bool streamed = false;
 
-    Middleware::NextHandler next(
-        [this, index, &connection, &streamed](HTTP::HttpRequest& request,
-                                              HTTP::HttpResponse& response) {
-            streamed = runChain(index + 1, request, response, connection);
-        });
+    Middleware::NextHandler next([this, index, &connection, &streamed](
+                                     HTTP::HttpRequest& request, HTTP::HttpResponse& response) {
+        streamed = runChain(index + 1, request, response, connection);
+    });
 
     middleware_[index](request, response, next);
 

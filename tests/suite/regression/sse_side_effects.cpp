@@ -113,9 +113,8 @@ static void normal_route_unaffected_by_streaming_route() {
         response.setStatus(HttpStatus::Ok);
         response.setBody("pong");
     });
-    router.stream("/events", [](const HttpRequest&, SseConnection& sse) {
-        (void)sse.send("tick", "0");
-    });
+    router.stream("/events",
+                  [](const HttpRequest&, SseConnection& sse) { (void)sse.send("tick", "0"); });
 
     Server server(router, /*threadCount=*/2);
     CHK(server.start(port));
@@ -150,9 +149,8 @@ static void cors_headers_reach_sse_preamble() {
     const uint16_t port = 18614;
 
     Router router;
-    router.stream("/events", [](const HttpRequest&, SseConnection& sse) {
-        (void)sse.send("tick", "0");
-    });
+    router.stream("/events",
+                  [](const HttpRequest&, SseConnection& sse) { (void)sse.send("tick", "0"); });
 
     Server server(router, /*threadCount=*/2);
     server.use(Cors());
@@ -162,8 +160,7 @@ static void cors_headers_reach_sse_preamble() {
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
     SocketHandle fd = connectToLoopback(port);
-    std::string request =
-        "GET /events HTTP/1.1\r\nHost: h\r\nOrigin: http://example.com\r\n\r\n";
+    std::string request = "GET /events HTTP/1.1\r\nHost: h\r\nOrigin: http://example.com\r\n\r\n";
     ::send(fd, request.data(), static_cast<int>(request.size()), 0);
 
     std::string preamble = recvChunk(fd);

@@ -10,8 +10,9 @@
 namespace FalconHTTP::Streaming {
 
 // Constructors
-SseConnection::SseConnection(Core::Connection connection,
-                              const HashMapPro::HashMap<std::string, std::string>& extraHeaders) noexcept
+SseConnection::SseConnection(
+    Core::Connection connection,
+    const HashMapPro::HashMap<std::string, std::string>& extraHeaders) noexcept
     : connection_(std::move(connection)) {
     alive_ = sendPreamble(extraHeaders);
 }
@@ -34,8 +35,8 @@ bool SseConnection::send(std::string_view event, std::string_view data) noexcept
     while (true) {
         std::size_t newline = data.find('\n', start);
         std::string_view line = (newline == std::string_view::npos)
-                                     ? data.substr(start)
-                                     : data.substr(start, newline - start);
+                                    ? data.substr(start)
+                                    : data.substr(start, newline - start);
 
         frame += "data: ";
         frame.append(line);
@@ -70,11 +71,10 @@ void SseConnection::close() noexcept {
 // Private Helpers
 bool SseConnection::sendPreamble(
     const HashMapPro::HashMap<std::string, std::string>& extraHeaders) noexcept {
-    std::string preamble =
-        "HTTP/1.1 200 OK\r\n"
-        "Content-Type: text/event-stream\r\n"
-        "Cache-Control: no-cache\r\n"
-        "Connection: close\r\n";
+    std::string preamble = "HTTP/1.1 200 OK\r\n"
+                           "Content-Type: text/event-stream\r\n"
+                           "Cache-Control: no-cache\r\n"
+                           "Connection: close\r\n";
 
     for (const auto& entry : extraHeaders) {
         preamble += entry.key;

@@ -145,10 +145,10 @@ static void streaming_route_delivers_multiple_events() {
         std::lock_guard<std::mutex> lock(timestampsMutex);
         CHK(sendTimestamps.size() == 3);
         if (sendTimestamps.size() == 3) {
-            auto gap1 = std::chrono::duration_cast<std::chrono::milliseconds>(
-                sendTimestamps[1] - sendTimestamps[0]);
-            auto gap2 = std::chrono::duration_cast<std::chrono::milliseconds>(
-                sendTimestamps[2] - sendTimestamps[1]);
+            auto gap1 = std::chrono::duration_cast<std::chrono::milliseconds>(sendTimestamps[1] -
+                                                                              sendTimestamps[0]);
+            auto gap2 = std::chrono::duration_cast<std::chrono::milliseconds>(sendTimestamps[2] -
+                                                                              sendTimestamps[1]);
             CHK(gap1.count() >= 80);
             CHK(gap2.count() >= 80);
         }

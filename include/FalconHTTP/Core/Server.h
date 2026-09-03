@@ -258,7 +258,7 @@ class Server {
      *         one-shot response flow, unchanged.
      */
     [[nodiscard]] bool runChain(std::size_t index, HTTP::HttpRequest& request,
-                               HTTP::HttpResponse& response, Connection& connection) const;
+                                HTTP::HttpResponse& response, Connection& connection) const;
 };
 
 } // namespace FalconHTTP::Core
