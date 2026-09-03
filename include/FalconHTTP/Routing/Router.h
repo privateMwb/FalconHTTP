@@ -89,12 +89,25 @@ class Router {
     /// than `delete` since `delete` is a reserved keyword in C++.
     void del(std::string pattern, RouteHandler handler);
 
+    /// Registers a streaming (Stream-kind) handler for @p pattern,
+    /// always under GET - SSE is a GET-only mechanism per spec, so
+    /// there is no method parameter (unlike get()/post()/put()/del()).
+    void stream(std::string pattern, StreamHandler handler);
+
     // Dispatch
 
     /**
-     * @brief Finds the first registered route matching both @p
-     *        request's method and path, invokes its handler, and
-     *        reports the outcome.
+     * @brief Finds the first registered Normal-kind route matching
+     *        both @p request's method and path, invokes its handler,
+     *        and reports the outcome.
+     * @details Stream-kind routes are skipped entirely by this scan -
+     *          dispatch() cannot invoke a StreamHandler (it has no
+     *          SseConnection to give it, only an HttpResponse&), so a
+     *          request matching only a Stream-kind route is reported
+     *          as DispatchResult::NotFound here. Callers that want to
+     *          handle streaming routes must call matchStream() first
+     *          (see its docs) and only fall back to dispatch() when it
+     *          returns nullptr - see Server::handleConnection().
      * @param request Path params are populated on a match (see
      *        HttpRequest::setPathParam()) before the handler runs.
      * @param response Populated by the matched handler; untouched if
@@ -105,6 +118,23 @@ class Router {
      */
     [[nodiscard]] DispatchResult dispatch(HTTP::HttpRequest& request,
                                           HTTP::HttpResponse& response) const;
+
+    /**
+     * @brief Finds the first registered Stream-kind route matching
+     *        both @p request's method and path.
+     * @details Mirrors dispatch()'s matching logic but scans only
+     *          Stream-kind routes and does not invoke anything - the
+     *          caller (Server) invokes the returned handler itself
+     *          once it has upgraded the connection to an
+     *          SseConnection. Populates path params on a match, same
+     *          as dispatch().
+     * @param request Path params are populated on a match.
+     * @return Pointer to the matched route's StreamHandler, or nullptr
+     *         if no Stream-kind route matches @p request's method and
+     *         path. The pointer is valid as long as this Router and
+     *         its routes entry are not mutated/destroyed.
+     */
+    [[nodiscard]] const StreamHandler* matchStream(HTTP::HttpRequest& request) const;
 
   private:
     // Private Helpers
