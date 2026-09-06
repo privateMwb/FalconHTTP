@@ -11,6 +11,11 @@ namespace FalconHTTP::Routing {
 
 // Constructors
 Route::Route(HTTP::HttpMethod method, std::string pattern, RouteHandler handler)
-    : method(method), pattern(std::move(pattern)), handler(std::move(handler)) {}
+    : method(method), pattern(std::move(pattern)), kind(RouteKind::Normal),
+      handler(std::move(handler)) {}
+
+Route::Route(HTTP::HttpMethod method, std::string pattern, StreamHandler handler)
+    : method(method), pattern(std::move(pattern)), kind(RouteKind::Stream),
+      streamHandler(std::move(handler)) {}
 
 } // namespace FalconHTTP::Routing

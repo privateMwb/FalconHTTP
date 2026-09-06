@@ -60,7 +60,11 @@ enum class HttpStatus {
     /// configured request quota for the current window.
     TooManyRequests = 429,
     InternalServerError = 500,
-    NotImplemented = 501
+    NotImplemented = 501,
+    /// Returned by Server::runChain() when a Stream-kind route
+    /// matches but ServerConfig::maxStreamingConnections concurrent
+    /// streams are already active.
+    ServiceUnavailable = 503
 };
 
 // Conversion

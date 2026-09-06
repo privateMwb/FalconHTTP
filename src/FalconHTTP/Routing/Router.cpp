@@ -27,12 +27,20 @@ void Router::del(std::string pattern, RouteHandler handler) {
     addRoute(HTTP::HttpMethod::Delete, std::move(pattern), std::move(handler));
 }
 
+void Router::stream(std::string pattern, StreamHandler handler) {
+    routes.push_back(Route(HTTP::HttpMethod::Get, std::move(pattern), std::move(handler)));
+}
+
 // Dispatch
 DispatchResult Router::dispatch(HTTP::HttpRequest& request, HTTP::HttpResponse& response) const {
     HashMap<std::string, std::string> params;
     bool pathMatchedOtherMethod = false;
 
     for (const Route& route : routes) {
+        if (route.kind != RouteKind::Normal) {
+            continue;
+        }
+
         if (route.method != request.method()) {
             HashMap<std::string, std::string> discarded;
             if (PathMatcher::match(route.pattern, request.path(), discarded)) {
@@ -54,6 +62,28 @@ DispatchResult Router::dispatch(HTTP::HttpRequest& request, HTTP::HttpResponse& 
     }
 
     return pathMatchedOtherMethod ? DispatchResult::MethodNotAllowed : DispatchResult::NotFound;
+}
+
+const StreamHandler* Router::matchStream(HTTP::HttpRequest& request) const {
+    HashMap<std::string, std::string> params;
+
+    for (const Route& route : routes) {
+        if (route.kind != RouteKind::Stream || route.method != request.method()) {
+            continue;
+        }
+
+        params.clear();
+
+        if (PathMatcher::match(route.pattern, request.path(), params)) {
+            for (const auto& entry : params) {
+                request.setPathParam(entry.key, entry.value);
+            }
+
+            return &route.streamHandler;
+        }
+    }
+
+    return nullptr;
 }
 
 // Private Helpers

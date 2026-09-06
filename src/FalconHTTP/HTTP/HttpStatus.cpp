@@ -40,6 +40,8 @@ std::string_view statusReasonPhrase(HttpStatus status) noexcept {
         return "Internal Server Error";
     case HttpStatus::NotImplemented:
         return "Not Implemented";
+    case HttpStatus::ServiceUnavailable:
+        return "Service Unavailable";
     }
 
     return "Unknown";

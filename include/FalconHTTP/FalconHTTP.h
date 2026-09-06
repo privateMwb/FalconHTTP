@@ -37,6 +37,7 @@
 #include <FalconHTTP/Routing/Route.h>
 #include <FalconHTTP/Routing/RouteHandler.h>
 #include <FalconHTTP/Routing/Router.h>
+#include <FalconHTTP/Streaming/SseConnection.h>   // FalconHTTP::Streaming
 #include <FalconHTTP/FileServer/StaticFileServer.h> // FalconHTTP::FileServer
 #include <FalconHTTP/Utility/UrlDecoder.h>          // FalconHTTP::Utility
 #include <FalconHTTP/Config/ServerConfig.h>         // FalconHTTP::Config

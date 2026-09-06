@@ -36,6 +36,7 @@
 #include <unistd.h>      // close
 #include <fcntl.h>       // fcntl (non-blocking mode)
 #include <sys/ioctl.h>   // ioctl (FIONBIO fallback)
+#include <cerrno>        // errno, EINTR
 #endif
 // clang-format on
 
@@ -149,15 +150,41 @@ bool Socket::setNoDelay(bool enable) noexcept {
 // ============================================================
 
 std::ptrdiff_t Socket::send(const void* data, std::size_t length) noexcept {
+    std::ptrdiff_t result;
+
+    do {
 #if defined(MSG_NOSIGNAL)
-    return ::send(fd_, reinterpret_cast<const char*>(data), length, MSG_NOSIGNAL);
+        result = ::send(fd_, reinterpret_cast<const char*>(data), length, MSG_NOSIGNAL);
 #else
-    return ::send(fd_, reinterpret_cast<const char*>(data), length, 0);
+        result = ::send(fd_, reinterpret_cast<const char*>(data), length, 0);
 #endif
+        // A signal delivered while blocked in send()/recv() (SIGCHLD
+        // from thread/process churn elsewhere in the process, timer
+        // signals, etc.) interrupts the syscall with EINTR - this is
+        // not a real error, just "nothing was sent yet, try again."
+        // Only meaningful on POSIX; Winsock has no equivalent for a
+        // blocking call interrupted by a signal.
+#ifndef _WIN32
+    } while (result < 0 && errno == EINTR);
+#else
+    } while (false);
+#endif
+
+    return result;
 }
 
 std::ptrdiff_t Socket::receive(void* buffer, std::size_t length) noexcept {
-    return ::recv(fd_, reinterpret_cast<char*>(buffer), length, 0);
+    std::ptrdiff_t result;
+
+    do {
+        result = ::recv(fd_, reinterpret_cast<char*>(buffer), length, 0);
+#ifndef _WIN32
+    } while (result < 0 && errno == EINTR);
+#else
+    } while (false);
+#endif
+
+    return result;
 }
 
 // ============================================================

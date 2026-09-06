@@ -75,6 +75,20 @@ class ServerConfig {
     /// Maximum request body size Server will accept (per
     /// Content-Length) before responding 413 Payload Too Large.
     std::size_t maxBodySize = 10 * 1024 * 1024; // 10 MiB
+
+    /// Maximum number of concurrent Stream-kind route connections
+    /// (see Routing::StreamHandler) Server will accept at once. Each
+    /// one pins one pool thread for its entire lifetime - FalconHTTP
+    /// is strictly thread-per-connection with an unbounded task queue
+    /// underneath (ThreadPoolPro), so with no cap, enough concurrent
+    /// subscribers can starve every short-lived normal request behind
+    /// a queue that never drains, rather than merely running slower.
+    /// Requests past this cap receive 503 Service Unavailable instead
+    /// of queuing forever. 0 (the default) means "auto": Server picks
+    /// half of threadCount (minimum 1) - override this explicitly to
+    /// size for a known number of expected concurrent viewers (e.g. a
+    /// live-tail dashboard) instead of the 50/50 split.
+    std::size_t maxStreamingConnections = 0;
 };
 
 } // namespace FalconHTTP::Config

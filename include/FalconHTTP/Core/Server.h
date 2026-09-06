@@ -130,6 +130,23 @@ class Server {
     /// flow" and ServerConfig::maxBodySize.
     std::size_t maxBodySize_ = DefaultMaxBodySize;
 
+    /// Active cap on concurrent Stream-kind connections. See
+    /// ServerConfig::maxStreamingConnections. Always resolved to a
+    /// concrete nonzero value at construction time (see both
+    /// constructors) - "0 means auto" is a ServerConfig-only
+    /// convention, never stored here as 0.
+    std::size_t maxStreamingConnections_ = 1;
+
+    /// Number of Stream-kind connections currently upgraded and
+    /// running (incremented/decremented around the StreamHandler
+    /// invocation in runChain(); see Server.cpp). Checked against
+    /// maxStreamingConnections_ before a new one is allowed to
+    /// upgrade. mutable: runChain() is logically const (it doesn't
+    /// change routing or middleware configuration) but this counter
+    /// is internal bookkeeping, not part of that observable state -
+    /// same rationale as a mutex guarding const-method-visible caches.
+    mutable std::atomic<std::size_t> activeStreams_{0};
+
   public:
     // Constructors
 
@@ -149,6 +166,10 @@ class Server {
      * @param threadCount Number of worker threads in the connection
      *        pool.
      */
+    /// maxStreamingConnections_ is set to half of @p threadCount
+    /// (minimum 1) - see ServerConfig::maxStreamingConnections for
+    /// why a cap exists at all; use the ServerConfig constructor to
+    /// override the split explicitly.
     explicit Server(Routing::Router& router, std::size_t threadCount) noexcept;
 
     /**
@@ -215,12 +236,29 @@ class Server {
     /// full per-request flow. Runs on a pool thread.
     void handleConnection(Connection connection);
 
-    /// Recursively invokes middleware_[index], passing a NextHandler
-    /// that calls runChain(index + 1, ...). At index == middleware_.size(),
-    /// invokes router_->dispatch() and translates its DispatchResult
-    /// into a 404/405 response if no route matched.
-    void runChain(std::size_t index, HTTP::HttpRequest& request,
-                  HTTP::HttpResponse& response) const;
+    /**
+     * @brief Recursively invokes middleware_[index], passing a
+     *        NextHandler that calls runChain(index + 1, ...).
+     * @details At index == middleware_.size(): if router_->
+     *          matchStream(request) finds a Stream-kind route, @p
+     *          connection is moved into a Streaming::SseConnection
+     *          (carrying forward any headers middleware_ already set
+     *          on @p response - e.g. Cors - so they reach the SSE
+     *          preamble instead of being silently dropped) and the
+     *          matched StreamHandler is invoked; otherwise falls back
+     *          to the pre-existing router_->dispatch() flow,
+     *          translating its DispatchResult into a 404/405 response
+     *          if no route matched. Either way, no middleware ahead of
+     *          index in the chain behaves any differently than before
+     *          streaming existed - they still just read/write @p
+     *          request and @p response.
+     * @return true if @p connection was consumed by a streaming route
+     *         (caller - handleConnection() - must not touch it again,
+     *         normal write+close included); false for the pre-existing
+     *         one-shot response flow, unchanged.
+     */
+    [[nodiscard]] bool runChain(std::size_t index, HTTP::HttpRequest& request,
+                                HTTP::HttpResponse& response, Connection& connection) const;
 };
 
 } // namespace FalconHTTP::Core

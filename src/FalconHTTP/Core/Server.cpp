@@ -19,11 +19,12 @@
 // ============================================================
 
 // clang-format off
-#include <FalconHTTP/Core/Server.h>          // Server (own header)
-#include <FalconHTTP/HTTP/HttpParser.h>      // HttpParser::parse
-#include <FalconHTTP/HTTP/HttpSerializer.h>  // HttpSerializer::serialize
-#include <FalconHTTP/HTTP/HttpStatus.h>      // HttpStatus
-#include <FalconHTTP/Core/Connection.h>      // Connection
+#include <FalconHTTP/Core/Server.h>              // Server (own header)
+#include <FalconHTTP/HTTP/HttpParser.h>          // HttpParser::parse
+#include <FalconHTTP/HTTP/HttpSerializer.h>      // HttpSerializer::serialize
+#include <FalconHTTP/HTTP/HttpStatus.h>          // HttpStatus
+#include <FalconHTTP/Core/Connection.h>          // Connection
+#include <FalconHTTP/Streaming/SseConnection.h>  // SseConnection
 // clang-format on
 
 // clang-format off
@@ -54,12 +55,26 @@ bool equalsIgnoreCase(std::string_view a, std::string_view b) noexcept {
 //  Section 1 — Constructor
 // ============================================================
 
+namespace {
+// Shared by both constructors: ServerConfig::maxStreamingConnections's
+// "0 means auto" convention resolves to half of the pool (minimum 1).
+std::size_t resolveMaxStreamingConnections(std::size_t configured, std::size_t threadCount) {
+    if (configured != 0) {
+        return configured;
+    }
+    return threadCount / 2 == 0 ? 1 : threadCount / 2;
+}
+} // namespace
+
 Server::Server(Routing::Router& router, std::size_t threadCount) noexcept
-    : router_(&router), pool_(threadCount) {}
+    : router_(&router), pool_(threadCount),
+      maxStreamingConnections_(resolveMaxStreamingConnections(0, threadCount)) {}
 
 Server::Server(Routing::Router& router, const Config::ServerConfig& config) noexcept
     : router_(&router), pool_(config.threadCount), configuredPort_(config.port),
-      maxHeaderSize_(config.maxHeaderSize), maxBodySize_(config.maxBodySize) {}
+      maxHeaderSize_(config.maxHeaderSize), maxBodySize_(config.maxBodySize),
+      maxStreamingConnections_(
+          resolveMaxStreamingConnections(config.maxStreamingConnections, config.threadCount)) {}
 
 // ============================================================
 //  Section 2 — Middleware Registration
@@ -207,7 +222,14 @@ void Server::handleConnection(Connection connection) {
         HTTP::HttpRequest request = HTTP::HttpParser::parse(raw);
         HTTP::HttpResponse response;
 
-        runChain(0, request, response);
+        if (runChain(0, request, response, connection)) {
+            // connection was moved into an SseConnection and handed
+            // to a StreamHandler by runChain() - already run to
+            // completion (handler returned or the peer disconnected)
+            // and closed by SseConnection's destructor. Nothing left
+            // to write or close here.
+            return;
+        }
 
         std::string raw_response = HTTP::HttpSerializer::serialize(response);
         (void)connection.sendAll(raw_response.data(), raw_response.size());
@@ -222,9 +244,30 @@ void Server::handleConnection(Connection connection) {
     connection.close();
 }
 
-void Server::runChain(std::size_t index, HTTP::HttpRequest& request,
-                      HTTP::HttpResponse& response) const {
+bool Server::runChain(std::size_t index, HTTP::HttpRequest& request, HTTP::HttpResponse& response,
+                      Connection& connection) const {
     if (index >= middleware_.size()) {
+        if (const Routing::StreamHandler* streamHandler = router_->matchStream(request)) {
+            if (activeStreams_.fetch_add(1, std::memory_order_relaxed) >=
+                maxStreamingConnections_) {
+                activeStreams_.fetch_sub(1, std::memory_order_relaxed);
+                response.setStatus(HTTP::HttpStatus::ServiceUnavailable);
+                response.setBody("Too many concurrent streaming connections");
+                return false;
+            }
+
+            struct ActiveStreamGuard {
+                std::atomic<std::size_t>& count;
+                ~ActiveStreamGuard() {
+                    count.fetch_sub(1, std::memory_order_relaxed);
+                }
+            } guard{activeStreams_};
+
+            Streaming::SseConnection sse(std::move(connection), response.headers());
+            (*streamHandler)(request, sse);
+            return true;
+        }
+
         Routing::DispatchResult result = router_->dispatch(request, response);
 
         if (result == Routing::DispatchResult::NotFound) {
@@ -234,15 +277,19 @@ void Server::runChain(std::size_t index, HTTP::HttpRequest& request,
             response.setStatus(HTTP::HttpStatus::MethodNotAllowed);
             response.setBody("Method Not Allowed");
         }
-        return;
+        return false;
     }
 
-    Middleware::NextHandler next(
-        [this, index](HTTP::HttpRequest& request, HTTP::HttpResponse& response) {
-            runChain(index + 1, request, response);
-        });
+    bool streamed = false;
+
+    Middleware::NextHandler next([this, index, &connection, &streamed](
+                                     HTTP::HttpRequest& request, HTTP::HttpResponse& response) {
+        streamed = runChain(index + 1, request, response, connection);
+    });
 
     middleware_[index](request, response, next);
+
+    return streamed;
 }
 
 } // namespace FalconHTTP::Core
