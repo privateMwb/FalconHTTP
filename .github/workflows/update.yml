@@ -17,11 +17,13 @@ on:
         required: true
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   update-packages:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # commits updated package recipe files back to the repo
 
     env:
       PACKAGE_NAME: falconhttp

@@ -48,8 +48,8 @@
   <a href="https://github.com/privateMwb/FalconHTTP/actions/workflows/cflite_pr.yml">
     <img src="https://github.com/privateMwb/FalconHTTP/actions/workflows/cflite_pr.yml/badge.svg" alt="Fuzzing">
   </a>
-  <a href="https://scorecard.dev/viewer/?uri=github.com/privateMwb/FalconHTTP">
-    <img src="https://api.securityscorecards.dev/projects/github.com/privateMwb/FalconHTTP/badge" alt="OpenSSF Scorecard">
+  <a href="https://www.bestpractices.dev/projects/14466">
+    <img src="https://www.bestpractices.dev/projects/14466/badge" alt="OpenSSF Best Practices">
   </a>
 </p>
 
