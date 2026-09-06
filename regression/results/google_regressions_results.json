@@ -1,0 +1,218 @@
+[
+  {
+    "name": "bench_cache_hit",
+    "baseline_ns": 89.94,
+    "current_ns": 89.94,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_dispatch_hit",
+    "baseline_ns": 2892.18,
+    "current_ns": 2892.18,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_dispatch_miss",
+    "baseline_ns": 1283.47,
+    "current_ns": 1283.47,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_match_stream_hit",
+    "baseline_ns": 1687.85,
+    "current_ns": 1687.85,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_match_stream_miss",
+    "baseline_ns": 987.26,
+    "current_ns": 987.26,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_path_match",
+    "baseline_ns": 986.25,
+    "current_ns": 986.25,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_parse_body_heavy",
+    "baseline_ns": 10790.22,
+    "current_ns": 10790.22,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_serialize_body_heavy",
+    "baseline_ns": 8631.05,
+    "current_ns": 8631.05,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_cache_put",
+    "baseline_ns": 449.77,
+    "current_ns": 449.77,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_chain_overhead",
+    "baseline_ns": 942.02,
+    "current_ns": 942.02,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_cors_overhead",
+    "baseline_ns": 3443.98,
+    "current_ns": 3443.98,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_parse_header_heavy",
+    "baseline_ns": 20896.21,
+    "current_ns": 20896.21,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_serialize_header_heavy",
+    "baseline_ns": 5183.94,
+    "current_ns": 5183.94,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_parse_request_line",
+    "baseline_ns": 1534.53,
+    "current_ns": 1534.53,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_sse_send",
+    "baseline_ns": 3882.91,
+    "current_ns": 3882.91,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_connection_move_construction",
+    "baseline_ns": 30829.79,
+    "current_ns": 30829.79,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_server_construction",
+    "baseline_ns": 251100.79,
+    "current_ns": 251100.79,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_socket_construction",
+    "baseline_ns": 32650.67,
+    "current_ns": 32650.67,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_parse_5_headers",
+    "baseline_ns": 3719.61,
+    "current_ns": 3719.61,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_parse_25_headers",
+    "baseline_ns": 10471.20,
+    "current_ns": 10471.20,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_parse_100_headers",
+    "baseline_ns": 42007.11,
+    "current_ns": 42007.11,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_parse_500_headers",
+    "baseline_ns": 207848.66,
+    "current_ns": 207848.66,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_chain_length_1",
+    "baseline_ns": 761.62,
+    "current_ns": 761.62,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_chain_length_5",
+    "baseline_ns": 1111.88,
+    "current_ns": 1111.88,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_chain_length_20",
+    "baseline_ns": 1210.19,
+    "current_ns": 1210.19,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_chain_length_50",
+    "baseline_ns": 1884.53,
+    "current_ns": 1884.53,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_dispatch_10_routes",
+    "baseline_ns": 1204.95,
+    "current_ns": 1204.95,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_dispatch_100_routes",
+    "baseline_ns": 8130.98,
+    "current_ns": 8130.98,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_dispatch_500_routes",
+    "baseline_ns": 48857.94,
+    "current_ns": 48857.94,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_dispatch_2000_routes",
+    "baseline_ns": 320480.88,
+    "current_ns": 320480.88,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_method_from_string_best_case",
+    "baseline_ns": 13.31,
+    "current_ns": 13.31,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_method_from_string_worst_case",
+    "baseline_ns": 30.08,
+    "current_ns": 30.08,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_method_to_string",
+    "baseline_ns": 73.90,
+    "current_ns": 73.90,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_mime_lookup_known",
+    "baseline_ns": 13.02,
+    "current_ns": 13.02,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_mime_lookup_unknown",
+    "baseline_ns": 10.24,
+    "current_ns": 10.24,
+    "pct_change": 0.00
+  },
+  {
+    "name": "bench_url_decode",
+    "baseline_ns": 1523.36,
+    "current_ns": 1523.36,
+    "pct_change": 0.00
+  }
+]

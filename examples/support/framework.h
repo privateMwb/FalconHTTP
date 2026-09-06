@@ -7,11 +7,11 @@
 // clang-format off
 #include <FalconHTTP/FalconHTTP.h>   // FalconHTTP (library under test) + rain:: alias
 
-#include "helpers.h"                 // output formatting & printing helpers
-#include "macros.h"                  // REGISTER_EXAMPLE_SUITE()
-#include "registry.h"                // ExampleSuite, ExampleRegistrar, example_registry()
+#include "helpers.h"   // output formatting & printing helpers
+#include "macros.h"    // REGISTER_EXAMPLE_SUITE()
+#include "registry.h"  // ExampleSuite, ExampleRegistrar, example_registry()
 
-#include <iomanip>                   // std::setw
+#include <iomanip>  // std::setw
 // clang-format on
 
 // ── Suite drivers ───────────────────────────────────────────────────

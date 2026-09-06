@@ -1,0 +1,163 @@
+// Regression test: a request whose header block exceeds
+// ServerConfig::maxHeaderSize before the terminating CRLFCRLF is
+// found must be rejected with 431 Request Header Fields Too Large.
+//
+// The original issue: same DoS class as oversized_body_rejected.cpp,
+// but on the header side - Server had no cap on how much it would
+// accumulate while still searching for the blank line terminating the
+// headers, so a client that never sends one could grow the buffer
+// unboundedly. Fixed by checking the accumulated buffer size against
+// maxHeaderSize_ on each iteration of that wait loop.
+//
+// SCOPE: see connection_close_sent.cpp for why this needs a live
+// Server and raw POSIX client code, and the fixed-port caveat (this
+// file uses a different port to avoid colliding with the other two
+// live-server regression tests if all three run in the same process).
+
+#include <FalconHTTP/FalconHTTP.h>
+#include <gtest/gtest.h>
+
+// clang-format off
+#include <thread>  // std::thread
+#include <chrono>  // std::chrono::milliseconds
+#include <string>  // std::string
+
+#ifdef _WIN32
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#endif
+// clang-format on
+
+using namespace FalconHTTP::Core;
+using namespace FalconHTTP::Routing;
+using namespace FalconHTTP::HTTP;
+using namespace FalconHTTP::Config;
+
+namespace {
+
+constexpr uint16_t TestPort = 18475;
+
+#ifdef _WIN32
+using SocketHandle = SOCKET;
+using SocketLength = int;
+
+inline void closeSocket(SocketHandle s) {
+    ::closesocket(s);
+}
+
+constexpr SocketHandle InvalidSocket = INVALID_SOCKET;
+
+#else
+
+using SocketHandle = int;
+using SocketLength = ssize_t;
+
+inline void closeSocket(SocketHandle s) {
+    ::close(s);
+}
+
+constexpr SocketHandle InvalidSocket = -1;
+
+#endif
+
+// See connection_close_sent.cpp for details on this helper.
+std::string sendRawRequest(uint16_t port, const std::string& request) {
+    SocketHandle fd = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (fd == InvalidSocket)
+        return {};
+
+    sockaddr_in addr{};
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(port);
+
+    if (::inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr) != 1) {
+        closeSocket(fd);
+        return {};
+    }
+
+    if (::connect(fd, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) != 0) {
+        closeSocket(fd);
+        return {};
+    }
+
+#ifdef _WIN32
+    ::send(fd, request.data(), static_cast<int>(request.size()), 0);
+#else
+    ::send(fd, request.data(), request.size(), 0);
+#endif
+
+    std::string response;
+    char buffer[4096];
+
+    SocketLength n;
+    while ((n = ::recv(fd, buffer, sizeof(buffer), 0)) > 0) {
+        response.append(buffer, static_cast<std::size_t>(n));
+    }
+
+    closeSocket(fd);
+    return response;
+}
+
+} // namespace
+
+// Verifies a header block larger than the configured maxHeaderSize,
+// sent without ever completing the terminating blank line, is
+// rejected with 431.
+TEST(OversizedHeaderRejected, OversizedUnterminatedHeadersAreRejectedWith431) {
+    ServerConfig config;
+    config.maxHeaderSize = 64; // tiny cap to keep the test fast
+
+    Router router;
+    router.get("/x", [](const HttpRequest&, HttpResponse& response) {
+        response.setStatus(HttpStatus::Ok);
+    });
+
+    Server server(router, config);
+    ASSERT_TRUE(server.start(TestPort));
+
+    std::thread runner([&server]() { server.run(); });
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
+    // Well over 64 bytes, and deliberately never terminated with the
+    // blank line that would end the header block.
+    std::string request = "GET /x HTTP/1.1\r\nX-Pad: " + std::string(200, 'a') + "\r\n";
+
+    std::string response = sendRawRequest(TestPort, request);
+
+    server.stop();
+    runner.join();
+
+    EXPECT_TRUE(response.starts_with("HTTP/1.1 431"));
+}
+
+// Verifies a normal, small request under the configured maxHeaderSize
+// is accepted normally - the cap must not be overly aggressive.
+TEST(OversizedHeaderRejected, SmallHeaderBlockIsAccepted) {
+    ServerConfig config;
+    config.maxHeaderSize = 64;
+
+    Router router;
+    router.get("/x", [](const HttpRequest&, HttpResponse& response) {
+        response.setStatus(HttpStatus::Ok);
+        response.setBody("fine");
+    });
+
+    Server server(router, config);
+    ASSERT_TRUE(server.start(TestPort));
+
+    std::thread runner([&server]() { server.run(); });
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
+    std::string response = sendRawRequest(TestPort, "GET /x HTTP/1.1\r\nHost: h\r\n\r\n");
+
+    server.stop();
+    runner.join();
+
+    EXPECT_TRUE(response.starts_with("HTTP/1.1 200 OK\r\n"));
+    EXPECT_TRUE(response.ends_with("fine"));
+}
