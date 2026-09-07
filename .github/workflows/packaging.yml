@@ -51,17 +51,19 @@ jobs:
           python-version: "3.x"
 
       - name: Install Conan
-        # Pinned to an exact version, not left floating - conan's own
-        # release cadence otherwise means this step's output can change
-        # between runs with no corresponding change in this repo. Matches
-        # the version already pinned in the VectorPro submodule's own
-        # packaging.yml for consistency across this author's projects.
-        # Scorecard's Pinned-Dependencies check specifically wants a
-        # hash pin (`--hash=sha256:...` or `--require-hashes` against a
-        # lockfile) to fully satisfy it - an exact version pin doesn't
-        # count as one - worth doing if that check's score matters more
-        # than the extra lockfile-maintenance overhead for one package.
-        run: pip install conan==2.31.1
+        # Real hash-pinning, not just a version pin: every package conan
+        # actually pulls in transitively (requests, PyYAML, Jinja2, ...)
+        # is pinned by sha256 too, generated for real via `pip-compile
+        # --generate-hashes` against PyPI (not hand-written - conan's
+        # transitive dependency tree has 14 entries, too easy to get
+        # wrong by hand) and verified to actually install clean with
+        # `pip install --require-hashes` before being committed here.
+        # To bump the conan version: edit packaging/requirements-conan.in,
+        # then regenerate with:
+        #   pip-compile --generate-hashes \
+        #     --output-file=packaging/requirements-conan.txt \
+        #     packaging/requirements-conan.in
+        run: pip install --require-hashes -r packaging/requirements-conan.txt
 
       - name: Detect default profile
         run: conan profile detect --force
