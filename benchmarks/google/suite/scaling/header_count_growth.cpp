@@ -41,37 +41,37 @@ const std::string kRaw500 = buildRawRequest(500);
 } // namespace
 
 // Measures parse() on a request with 5 headers.
-static void bench_parse_5_headers(benchmark::State& state) {
+static void parse_headers_5(benchmark::State& state) {
     for (auto _ : state) {
         HttpRequest request = HttpParser::parse(kRaw5);
         benchmark::DoNotOptimize(request);
     }
 }
-BENCHMARK(bench_parse_5_headers);
+BENCHMARK(parse_headers_5);
 
 // Measures parse() on a request with 25 headers.
-static void bench_parse_25_headers(benchmark::State& state) {
+static void parse_headers_25(benchmark::State& state) {
     for (auto _ : state) {
         HttpRequest request = HttpParser::parse(kRaw25);
         benchmark::DoNotOptimize(request);
     }
 }
-BENCHMARK(bench_parse_25_headers);
+BENCHMARK(parse_headers_25);
 
 // Measures parse() on a request with 100 headers.
-static void bench_parse_100_headers(benchmark::State& state) {
+static void parse_headers_100(benchmark::State& state) {
     for (auto _ : state) {
         HttpRequest request = HttpParser::parse(kRaw100);
         benchmark::DoNotOptimize(request);
     }
 }
-BENCHMARK(bench_parse_100_headers);
+BENCHMARK(parse_headers_100);
 
 // Measures parse() on a request with 500 headers.
-static void bench_parse_500_headers(benchmark::State& state) {
+static void parse_headers_500(benchmark::State& state) {
     for (auto _ : state) {
         HttpRequest request = HttpParser::parse(kRaw500);
         benchmark::DoNotOptimize(request);
     }
 }
-BENCHMARK(bench_parse_500_headers);
+BENCHMARK(parse_headers_500);

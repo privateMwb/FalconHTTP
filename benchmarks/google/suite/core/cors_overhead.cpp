@@ -20,7 +20,7 @@ using namespace FalconHTTP::HTTP;
 using namespace FalconHTTP::Middleware;
 
 // Measures Cors::operator() on a non-OPTIONS request.
-static void bench_cors_overhead(benchmark::State& state) {
+static void cors_overhead(benchmark::State& state) {
     Cors cors("https://example.com");
     NextHandler next = [](HttpRequest&, HttpResponse&) {};
 
@@ -33,4 +33,4 @@ static void bench_cors_overhead(benchmark::State& state) {
         benchmark::DoNotOptimize(response);
     }
 }
-BENCHMARK(bench_cors_overhead);
+BENCHMARK(cors_overhead);

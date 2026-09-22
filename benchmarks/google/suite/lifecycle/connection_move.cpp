@@ -28,11 +28,11 @@ using namespace FalconHTTP::Core;
 
 // Measures Connection construction + move construction together (see
 // the file-level CAVEAT on why the two can't be cleanly separated).
-static void bench_connection_move_construction(benchmark::State& state) {
+static void connection_move_construction(benchmark::State& state) {
     for (auto _ : state) {
         Connection source(Socket::createTcp());
         Connection moved(std::move(source));
         benchmark::DoNotOptimize(moved);
     }
 }
-BENCHMARK(bench_connection_move_construction);
+BENCHMARK(connection_move_construction);

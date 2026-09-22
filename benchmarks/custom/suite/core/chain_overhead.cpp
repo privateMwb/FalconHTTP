@@ -74,7 +74,7 @@ static void bench_chain_overhead() {
                  [](HttpRequest&, HttpResponse& res) { res.setStatus(HttpStatus::Ok); });
     };
 
-    BENCH_SOLO("3-middleware chain + handler", f);
+    BENCH_SOLO("three-middleware chain", f);
 }
 
 // Executes all middleware chain overhead benchmark cases.

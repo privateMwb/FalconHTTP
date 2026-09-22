@@ -26,7 +26,7 @@ static void bench_socket_construction() {
         socket.close();
     };
 
-    BENCH_SOLO("Socket::createTcp() + close()", f);
+    BENCH_SOLO("createTcp + close", f);
 }
 
 // Executes all socket construction benchmark cases.

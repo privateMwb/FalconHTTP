@@ -50,7 +50,7 @@ const std::string kRawRequest = buildRawRequest();
 static void bench_parse_body_heavy() {
     auto f = [&] { HttpRequest request = HttpParser::parse(kRawRequest); };
 
-    BENCH_SOLO("parse() 64 KiB body", f);
+    BENCH_SOLO("parse 64 KiB body", f);
 }
 
 // Measures serialize() on a response with a 64 KiB body.
@@ -59,14 +59,12 @@ static void bench_serialize_body_heavy() {
 
     auto f = [&] { std::string output = HttpSerializer::serialize(response); };
 
-    BENCH_SOLO("serialize() 64 KiB body", f);
+    BENCH_SOLO("serialize 64 KiB body", f);
 }
 
 // Executes both the body-heavy parsing and serialization benchmark cases.
 static void run_benchmarks() {
     bench_parse_body_heavy();
-    std::cout << "\n";
-
     bench_serialize_body_heavy();
 }
 

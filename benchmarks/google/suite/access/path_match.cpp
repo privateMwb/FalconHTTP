@@ -24,11 +24,11 @@ const std::string_view kPath = "/posts/42/comments/7";
 } // namespace
 
 // Measures match() on a pattern with two :param segments.
-static void bench_path_match(benchmark::State& state) {
+static void path_match(benchmark::State& state) {
     for (auto _ : state) {
         HashMap<std::string, std::string> params;
         bool matched = PathMatcher::match(kPattern, kPath, params);
         benchmark::DoNotOptimize(matched);
     }
 }
-BENCHMARK(bench_path_match);
+BENCHMARK(path_match);

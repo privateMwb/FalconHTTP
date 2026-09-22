@@ -34,7 +34,7 @@ static void bench_connection_move_construction() {
         Connection moved(std::move(source));
     };
 
-    BENCH_SOLO("Connection create + move construction", f);
+    BENCH_SOLO("conn move construct", f);
 }
 
 // Executes all Connection move benchmark cases.

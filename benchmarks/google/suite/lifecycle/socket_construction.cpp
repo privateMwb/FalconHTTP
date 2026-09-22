@@ -20,11 +20,11 @@ using namespace FalconHTTP::Core;
 
 // Measures createTcp() + close() as one paired operation, since a
 // socket left open would exhaust file descriptors across iterations.
-static void bench_socket_construction(benchmark::State& state) {
+static void socket_construction(benchmark::State& state) {
     for (auto _ : state) {
         Socket socket = Socket::createTcp();
         socket.close();
         benchmark::DoNotOptimize(socket);
     }
 }
-BENCHMARK(bench_socket_construction);
+BENCHMARK(socket_construction);

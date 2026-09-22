@@ -25,7 +25,7 @@ constexpr std::string_view kEncoded = "hello%20world%21+this+is+a%2Ftest%3Fquery
 static void bench_url_decode() {
     auto f = [&] { std::string decoded = UrlDecoder::decode(kEncoded); };
 
-    BENCH_SOLO("UrlDecoder::decode() mixed encoding", f);
+    BENCH_SOLO("decode mixed encoding", f);
 }
 
 // Executes all URL decoding benchmark cases.

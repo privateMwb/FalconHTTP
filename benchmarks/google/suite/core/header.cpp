@@ -47,16 +47,16 @@ const std::string kRawRequest = buildRawRequest();
 } // namespace
 
 // Measures parse() on a request with 50 headers.
-static void bench_parse_header_heavy(benchmark::State& state) {
+static void parse_header_heavy(benchmark::State& state) {
     for (auto _ : state) {
         HttpRequest request = HttpParser::parse(kRawRequest);
         benchmark::DoNotOptimize(request);
     }
 }
-BENCHMARK(bench_parse_header_heavy);
+BENCHMARK(parse_header_heavy);
 
 // Measures serialize() on a response with 50 headers.
-static void bench_serialize_header_heavy(benchmark::State& state) {
+static void serialize_header_heavy(benchmark::State& state) {
     HttpResponse response = buildResponse();
 
     for (auto _ : state) {
@@ -64,4 +64,4 @@ static void bench_serialize_header_heavy(benchmark::State& state) {
         benchmark::DoNotOptimize(output);
     }
 }
-BENCHMARK(bench_serialize_header_heavy);
+BENCHMARK(serialize_header_heavy);

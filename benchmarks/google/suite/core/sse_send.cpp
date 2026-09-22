@@ -70,7 +70,7 @@ void closeSocket(SocketHandle fd) {
 
 // Measures SseConnection::send() end to end (framing + write) on a
 // connection whose peer is continuously draining in the background.
-static void bench_sse_send(benchmark::State& state) {
+static void sse_send(benchmark::State& state) {
     const uint16_t port = 18901;
 
     // Fully qualified: VectorPro also declares a Listener type, and
@@ -109,4 +109,4 @@ static void bench_sse_send(benchmark::State& state) {
     closeSocket(client);
     drainer.join();
 }
-BENCHMARK(bench_sse_send);
+BENCHMARK(sse_send);

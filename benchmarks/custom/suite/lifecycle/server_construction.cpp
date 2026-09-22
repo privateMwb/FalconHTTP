@@ -46,7 +46,7 @@ Router router;
 static void bench_server_construction() {
     auto f = [&] { Server server(router, /*threadCount=*/4); };
 
-    BENCH_SOLO("Server construction, 4 threads", f);
+    BENCH_SOLO("server construct 4threads", f);
 }
 
 // Executes all Server construction benchmark cases.

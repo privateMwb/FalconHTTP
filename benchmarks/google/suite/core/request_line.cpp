@@ -27,10 +27,10 @@ const std::string kRawRequest = "GET /health HTTP/1.1\r\n"
 } // namespace
 
 // Measures parse() on a minimal request line + a handful of headers.
-static void bench_parse_request_line(benchmark::State& state) {
+static void parse_request_line(benchmark::State& state) {
     for (auto _ : state) {
         HttpRequest request = HttpParser::parse(kRawRequest);
         benchmark::DoNotOptimize(request);
     }
 }
-BENCHMARK(bench_parse_request_line);
+BENCHMARK(parse_request_line);

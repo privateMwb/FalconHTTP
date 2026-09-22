@@ -22,10 +22,10 @@ constexpr std::string_view kEncoded = "hello%20world%21+this+is+a%2Ftest%3Fquery
 } // namespace
 
 // Measures decode() on a mixed plain/percent-encoded/'+' string.
-static void bench_url_decode(benchmark::State& state) {
+static void url_decode(benchmark::State& state) {
     for (auto _ : state) {
         std::string decoded = UrlDecoder::decode(kEncoded);
         benchmark::DoNotOptimize(decoded);
     }
 }
-BENCHMARK(bench_url_decode);
+BENCHMARK(url_decode);

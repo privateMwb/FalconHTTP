@@ -30,7 +30,7 @@ const std::string kRawRequest = "GET /health HTTP/1.1\r\n"
 static void bench_parse_request_line() {
     auto f = [&] { HttpRequest request = HttpParser::parse(kRawRequest); };
 
-    BENCH_SOLO("parse() minimal request line", f);
+    BENCH_SOLO("parse min request line", f);
 }
 
 // Executes all request-line parsing benchmark cases.

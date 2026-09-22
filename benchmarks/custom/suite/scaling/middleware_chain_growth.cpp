@@ -105,14 +105,8 @@ static void bench_chain_length_50() {
 // Executes all middleware chain growth benchmark cases.
 static void run_benchmarks() {
     bench_chain_length_1();
-    std::cout << "\n";
-
     bench_chain_length_5();
-    std::cout << "\n";
-
     bench_chain_length_20();
-    std::cout << "\n";
-
     bench_chain_length_50();
 }
 
