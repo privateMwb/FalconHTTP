@@ -44,43 +44,36 @@ const std::string kRaw500 = buildRawRequest(500);
 static void bench_parse_5_headers() {
     auto f = [&] { HttpRequest request = HttpParser::parse(kRaw5); };
 
-    BENCH_SOLO("parse() 5 headers", f);
+    BENCH_SOLO("parse 5 headers", f);
 }
 
 // Measures parse() on a request with 25 headers.
 static void bench_parse_25_headers() {
     auto f = [&] { HttpRequest request = HttpParser::parse(kRaw25); };
 
-    BENCH_SOLO("parse() 25 headers", f);
+    BENCH_SOLO("parse 25 headers", f);
 }
 
 // Measures parse() on a request with 100 headers.
 static void bench_parse_100_headers() {
     auto f = [&] { HttpRequest request = HttpParser::parse(kRaw100); };
 
-    BENCH_SOLO("parse() 100 headers", f);
+    BENCH_SOLO("parse 100 headers", f);
 }
 
 // Measures parse() on a request with 500 headers.
 static void bench_parse_500_headers() {
     auto f = [&] { HttpRequest request = HttpParser::parse(kRaw500); };
 
-    BENCH_SOLO("parse() 500 headers", f);
+    BENCH_SOLO("parse 500 headers", f);
 }
 
 // Executes all header count growth benchmark cases.
 static void run_benchmarks() {
     bench_parse_5_headers();
-    std::cout << "\n";
-
     bench_parse_25_headers();
-    std::cout << "\n";
-
     bench_parse_100_headers();
-    std::cout << "\n";
-
     bench_parse_500_headers();
-    std::cout << "\n";
 }
 
 REGISTER_BENCH_SUITE();

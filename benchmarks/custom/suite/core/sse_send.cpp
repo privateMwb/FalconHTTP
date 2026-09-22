@@ -105,7 +105,7 @@ static void bench_sse_send() {
         (void)ok;
     };
 
-    BENCH_SOLO("SseConnection::send() framing + write", f);
+    BENCH_SOLO("send framing + write", f);
 
     keepDraining.store(false, std::memory_order_relaxed);
     sse.close();

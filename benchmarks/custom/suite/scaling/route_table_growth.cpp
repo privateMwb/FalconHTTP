@@ -56,7 +56,7 @@ static void bench_dispatch_10_routes() {
         (void)router10.dispatch(request, response);
     };
 
-    BENCH_SOLO("dispatch() last of 10 routes", f);
+    BENCH_SOLO("dispatch last of 10r", f);
 }
 
 // Measures dispatch() to the last route in a 100-route table.
@@ -70,7 +70,7 @@ static void bench_dispatch_100_routes() {
         (void)router100.dispatch(request, response);
     };
 
-    BENCH_SOLO("dispatch() last of 100 routes", f);
+    BENCH_SOLO("dispatch last of 100r", f);
 }
 
 // Measures dispatch() to the last route in a 500-route table.
@@ -84,7 +84,7 @@ static void bench_dispatch_500_routes() {
         (void)router500.dispatch(request, response);
     };
 
-    BENCH_SOLO("dispatch() last of 500 routes", f);
+    BENCH_SOLO("dispatch last of 500r", f);
 }
 
 // Measures dispatch() to the last route in a 2000-route table.
@@ -98,20 +98,14 @@ static void bench_dispatch_2000_routes() {
         (void)router2000.dispatch(request, response);
     };
 
-    BENCH_SOLO("dispatch() last of 2000 routes", f);
+    BENCH_SOLO("dispatch last of 2000r", f);
 }
 
 // Executes all route table growth benchmark cases.
 static void run_benchmarks() {
     bench_dispatch_10_routes();
-    std::cout << "\n";
-
     bench_dispatch_100_routes();
-    std::cout << "\n";
-
     bench_dispatch_500_routes();
-    std::cout << "\n";
-
     bench_dispatch_2000_routes();
 }
 

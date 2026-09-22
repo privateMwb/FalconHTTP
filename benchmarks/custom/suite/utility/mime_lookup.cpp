@@ -26,7 +26,7 @@ static void bench_mime_lookup_known() {
         (void)type;
     };
 
-    BENCH_SOLO("mimeTypeFromExtension() known extension", f);
+    BENCH_SOLO("mimeType known", f);
 }
 
 // Measures the lookup for an extension not in the built-in table,
@@ -37,7 +37,7 @@ static void bench_mime_lookup_unknown() {
         (void)type;
     };
 
-    BENCH_SOLO("mimeTypeFromExtension() unknown extension", f);
+    BENCH_SOLO("mimeType unknown", f);
 }
 
 // Executes all MIME type lookup benchmark cases.

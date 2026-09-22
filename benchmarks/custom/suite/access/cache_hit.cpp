@@ -33,7 +33,7 @@ static void bench_cache_hit() {
         (void)found;
     };
 
-    BENCH_SOLO("FileCache::get() existing entry", f);
+    BENCH_SOLO("get existing entry", f);
 }
 
 // Executes all cache-hit benchmark cases.

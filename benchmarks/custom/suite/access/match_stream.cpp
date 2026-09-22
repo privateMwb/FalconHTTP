@@ -50,7 +50,7 @@ static void bench_match_stream_hit() {
         (void)handler;
     };
 
-    BENCH_SOLO("Router::matchStream() matching route", f);
+    BENCH_SOLO("matchStream match", f);
 }
 
 // Measures matchStream() on a request matching none of the registered
@@ -67,14 +67,12 @@ static void bench_match_stream_miss() {
         (void)handler;
     };
 
-    BENCH_SOLO("Router::matchStream() no matching route", f);
+    BENCH_SOLO("matchStream no match", f);
 }
 
 // Executes both the matchStream-hit and matchStream-miss benchmark cases.
 static void run_benchmarks() {
     bench_match_stream_hit();
-    std::cout << "\n";
-
     bench_match_stream_miss();
 }
 

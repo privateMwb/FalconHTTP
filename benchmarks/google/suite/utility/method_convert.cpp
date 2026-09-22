@@ -20,29 +20,29 @@ using namespace FalconHTTP::HTTP;
 
 // Measures methodFromString() on GET - the first method checked,
 // so this is the best-case comparison chain cost.
-static void bench_method_from_string_best_case(benchmark::State& state) {
+static void method_from_string_case_best(benchmark::State& state) {
     for (auto _ : state) {
         HttpMethod method = methodFromString("GET");
         benchmark::DoNotOptimize(method);
     }
 }
-BENCHMARK(bench_method_from_string_best_case);
+BENCHMARK(method_from_string_case_best);
 
 // Measures methodFromString() on OPTIONS - the last method checked,
 // so this is the worst-case comparison chain cost.
-static void bench_method_from_string_worst_case(benchmark::State& state) {
+static void method_from_string_case_worst(benchmark::State& state) {
     for (auto _ : state) {
         HttpMethod method = methodFromString("OPTIONS");
         benchmark::DoNotOptimize(method);
     }
 }
-BENCHMARK(bench_method_from_string_worst_case);
+BENCHMARK(method_from_string_case_worst);
 
 // Measures methodToString() on HttpMethod::Get.
-static void bench_method_to_string(benchmark::State& state) {
+static void method_to_string(benchmark::State& state) {
     for (auto _ : state) {
         std::string_view text = methodToString(HttpMethod::Get);
         benchmark::DoNotOptimize(text);
     }
 }
-BENCHMARK(bench_method_to_string);
+BENCHMARK(method_to_string);

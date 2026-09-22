@@ -4,206 +4,206 @@
 
 | Test | Iteration | FalconHTTP |
 |---|---|---|
-| FileCache::get() Existing Entry | 10K | 1.05 ms |
-| FileCache::get() Existing Entry | 100K | 9.97 ms |
-| FileCache::get() Existing Entry | 1M | 99.61 ms |
+| Get Existing Entry | 10K | 886.15 us |
+| Get Existing Entry | 100K | 10.70 ms |
+| Get Existing Entry | 1M | 90.76 ms |
 
 ## Dispatch
 
 | Test | Iteration | FalconHTTP |
 |---|---|---|
-| Router::dispatch() Matching Route | 10K | 26.56 ms |
-| Router::dispatch() Matching Route | 100K | 264.93 ms |
-| Router::dispatch() Matching Route | 1M | 3.56 s |
-| Router::dispatch() No Matching Route | 10K | 14.28 ms |
-| Router::dispatch() No Matching Route | 100K | 168.16 ms |
-| Router::dispatch() No Matching Route | 1M | 1.61 s |
+| Dispatch Match | 10K | 49.73 ms |
+| Dispatch Match | 100K | 257.68 ms |
+| Dispatch Match | 1M | 2.94 s |
+| Dispatch No Match | 10K | 13.15 ms |
+| Dispatch No Match | 100K | 196.36 ms |
+| Dispatch No Match | 1M | 1.49 s |
 
 ## Match Stream
 
 | Test | Iteration | FalconHTTP |
 |---|---|---|
-| Router::matchStream() Matching Route | 10K | 31.45 ms |
-| Router::matchStream() Matching Route | 100K | 349.49 ms |
-| Router::matchStream() Matching Route | 1M | 2.19 s |
-| Router::matchStream() No Matching Route | 10K | 11.68 ms |
-| Router::matchStream() No Matching Route | 100K | 132.40 ms |
-| Router::matchStream() No Matching Route | 1M | 1.20 s |
+| MatchStream Match | 10K | 15.15 ms |
+| MatchStream Match | 100K | 151.30 ms |
+| MatchStream Match | 1M | 1.53 s |
+| MatchStream No Match | 10K | 10.19 ms |
+| MatchStream No Match | 100K | 101.31 ms |
+| MatchStream No Match | 1M | 1.09 s |
 
 ## Path Match
 
 | Test | Iteration | FalconHTTP |
 |---|---|---|
-| PathMatcher::match() Two Params | 10K | 7.82 ms |
-| PathMatcher::match() Two Params | 100K | 100.25 ms |
-| PathMatcher::match() Two Params | 1M | 1.07 s |
+| Match Two Params | 10K | 7.17 ms |
+| Match Two Params | 100K | 134.18 ms |
+| Match Two Params | 1M | 925.12 ms |
 
 ## Body
 
 | Test | Iteration | FalconHTTP |
 |---|---|---|
-| Parse() 64 KiB Body | 10K | 115.24 ms |
-| Parse() 64 KiB Body | 100K | 1.13 s |
-| Parse() 64 KiB Body | 1M | 32.22 s |
-| Serialize() 64 KiB Body | 10K | 305.14 ms |
-| Serialize() 64 KiB Body | 100K | 2.62 s |
-| Serialize() 64 KiB Body | 1M | 25.10 s |
+| Parse 64 KiB Body | 10K | 100.55 ms |
+| Parse 64 KiB Body | 100K | 999.78 ms |
+| Parse 64 KiB Body | 1M | 11.88 s |
+| Serialize 64 KiB Body | 10K | 93.81 ms |
+| Serialize 64 KiB Body | 100K | 934.06 ms |
+| Serialize 64 KiB Body | 1M | 11.13 s |
 
 ## Cache Put
 
 | Test | Iteration | FalconHTTP |
 |---|---|---|
-| FileCache::put() Fresh Key | 10K | 10.05 ms |
-| FileCache::put() Fresh Key | 100K | 84.60 ms |
-| FileCache::put() Fresh Key | 1M | 831.00 ms |
+| Put Fresh Key | 10K | 4.49 ms |
+| Put Fresh Key | 100K | 43.78 ms |
+| Put Fresh Key | 1M | 413.32 ms |
 
 ## Chain Overhead
 
 | Test | Iteration | FalconHTTP |
 |---|---|---|
-| 3-middleware Chain + Handler | 10K | 19.65 ms |
-| 3-middleware Chain + Handler | 100K | 189.73 ms |
-| 3-middleware Chain + Handler | 1M | 1.95 s |
+| Three-middleware Chain | 10K | 7.53 ms |
+| Three-middleware Chain | 100K | 75.23 ms |
+| Three-middleware Chain | 1M | 1.56 s |
 
 ## Cors Overhead
 
 | Test | Iteration | FalconHTTP |
 |---|---|---|
-| Cors::operator() Non-preflight | 10K | 78.91 ms |
-| Cors::operator() Non-preflight | 100K | 731.34 ms |
-| Cors::operator() Non-preflight | 1M | 7.24 s |
+| Operator Non-preflight | 10K | 56.73 ms |
+| Operator Non-preflight | 100K | 572.95 ms |
+| Operator Non-preflight | 1M | 14.51 s |
 
 ## Header
 
 | Test | Iteration | FalconHTTP |
 |---|---|---|
-| Parse() 50 Headers | 10K | 492.14 ms |
-| Parse() 50 Headers | 100K | 5.22 s |
-| Parse() 50 Headers | 1M | 49.65 s |
-| Serialize() 50 Headers | 10K | 118.85 ms |
-| Serialize() 50 Headers | 100K | 1.23 s |
-| Serialize() 50 Headers | 1M | 12.39 s |
+| Parse 50 Headers | 10K | 378.20 ms |
+| Parse 50 Headers | 100K | 3.89 s |
+| Parse 50 Headers | 1M | 38.33 s |
+| Serialize 50 Headers | 10K | 100.00 ms |
+| Serialize 50 Headers | 100K | 996.36 ms |
+| Serialize 50 Headers | 1M | 10.04 s |
 
 ## Request Line
 
 | Test | Iteration | FalconHTTP |
 |---|---|---|
-| Parse() Minimal Request Line | 10K | 38.62 ms |
-| Parse() Minimal Request Line | 100K | 370.28 ms |
-| Parse() Minimal Request Line | 1M | 3.78 s |
+| Parse Min Request Line | 10K | 30.54 ms |
+| Parse Min Request Line | 100K | 307.04 ms |
+| Parse Min Request Line | 1M | 3.07 s |
 
 ## Sse Send
 
 | Test | Iteration | FalconHTTP |
 |---|---|---|
-| SseConnection::send() Framing + Write | 10K | 124.28 ms |
-| SseConnection::send() Framing + Write | 100K | 4.83 s |
-| SseConnection::send() Framing + Write | 1M | 19.37 s |
+| Send Framing + Write | 10K | 94.51 ms |
+| Send Framing + Write | 100K | 12.33 s |
+| Send Framing + Write | 1M | 56.39 s |
 
 ## Connection Move
 
 | Test | Iteration | FalconHTTP |
 |---|---|---|
-| Connection Create + Move Construction | 10K | 394.66 ms |
-| Connection Create + Move Construction | 100K | 4.28 s |
-| Connection Create + Move Construction | 1M | 97.26 s |
+| Conn Move Construct | 10K | 905.88 ms |
+| Conn Move Construct | 100K | 8.92 s |
+| Conn Move Construct | 1M | 90.03 s |
 
 ## Server Construction
 
 | Test | Iteration | FalconHTTP |
 |---|---|---|
-| Server Construction, 4 Threads | 10K | 3.45 s |
-| Server Construction, 4 Threads | 100K | 22.15 s |
-| Server Construction, 4 Threads | 1M | 302.07 s |
+| Server Construct 4threads | 10K | 1.89 s |
+| Server Construct 4threads | 100K | 23.46 s |
+| Server Construct 4threads | 1M | 321.94 s |
 
 ## Socket Construction
 
 | Test | Iteration | FalconHTTP |
 |---|---|---|
-| Socket::createTcp() + Close() | 10K | 1.02 s |
-| Socket::createTcp() + Close() | 100K | 10.20 s |
-| Socket::createTcp() + Close() | 1M | 114.00 s |
+| CreateTcp + Close | 10K | 880.15 ms |
+| CreateTcp + Close | 100K | 8.86 s |
+| CreateTcp + Close | 1M | 88.87 s |
 
 ## Header Count Growth
 
 | Test | Iteration | FalconHTTP |
 |---|---|---|
-| Parse() 5 Headers | 10K | 59.14 ms |
-| Parse() 5 Headers | 100K | 597.55 ms |
-| Parse() 5 Headers | 1M | 6.20 s |
-| Parse() 25 Headers | 10K | 245.72 ms |
-| Parse() 25 Headers | 100K | 2.45 s |
-| Parse() 25 Headers | 1M | 25.58 s |
-| Parse() 100 Headers | 10K | 925.84 ms |
-| Parse() 100 Headers | 100K | 9.92 s |
-| Parse() 100 Headers | 1M | 77.55 s |
-| Parse() 500 Headers | 10K | 2.34 s |
-| Parse() 500 Headers | 100K | 24.58 s |
-| Parse() 500 Headers | 1M | 462.98 s |
+| Parse 5 Headers | 10K | 50.35 ms |
+| Parse 5 Headers | 100K | 482.04 ms |
+| Parse 5 Headers | 1M | 4.82 s |
+| Parse 25 Headers | 10K | 196.30 ms |
+| Parse 25 Headers | 100K | 1.96 s |
+| Parse 25 Headers | 1M | 19.63 s |
+| Parse 100 Headers | 10K | 740.68 ms |
+| Parse 100 Headers | 100K | 7.41 s |
+| Parse 100 Headers | 1M | 73.72 s |
+| Parse 500 Headers | 10K | 3.60 s |
+| Parse 500 Headers | 100K | 36.00 s |
+| Parse 500 Headers | 1M | 606.86 s |
 
 ## Middleware Chain Growth
 
 | Test | Iteration | FalconHTTP |
 |---|---|---|
-| Chain Length 1 | 10K | 18.03 ms |
-| Chain Length 1 | 100K | 183.07 ms |
-| Chain Length 1 | 1M | 1.78 s |
-| Chain Length 5 | 10K | 19.01 ms |
-| Chain Length 5 | 100K | 189.05 ms |
-| Chain Length 5 | 1M | 1.90 s |
-| Chain Length 20 | 10K | 24.56 ms |
-| Chain Length 20 | 100K | 244.78 ms |
-| Chain Length 20 | 1M | 2.61 s |
-| Chain Length 50 | 10K | 53.05 ms |
-| Chain Length 50 | 100K | 418.25 ms |
-| Chain Length 50 | 1M | 3.55 s |
+| Chain Length 1 | 10K | 14.74 ms |
+| Chain Length 1 | 100K | 147.09 ms |
+| Chain Length 1 | 1M | 1.48 s |
+| Chain Length 5 | 10K | 16.20 ms |
+| Chain Length 5 | 100K | 157.03 ms |
+| Chain Length 5 | 1M | 1.57 s |
+| Chain Length 20 | 10K | 20.73 ms |
+| Chain Length 20 | 100K | 206.53 ms |
+| Chain Length 20 | 1M | 2.09 s |
+| Chain Length 50 | 10K | 29.86 ms |
+| Chain Length 50 | 100K | 293.99 ms |
+| Chain Length 50 | 1M | 2.96 s |
 
 ## Route Table Growth
 
 | Test | Iteration | FalconHTTP |
 |---|---|---|
-| Dispatch() Last Of 10 Routes | 10K | 29.81 ms |
-| Dispatch() Last Of 10 Routes | 100K | 296.42 ms |
-| Dispatch() Last Of 10 Routes | 1M | 2.97 s |
-| Dispatch() Last Of 100 Routes | 10K | 215.95 ms |
-| Dispatch() Last Of 100 Routes | 100K | 2.16 s |
-| Dispatch() Last Of 100 Routes | 1M | 22.27 s |
-| Dispatch() Last Of 500 Routes | 10K | 1.05 s |
-| Dispatch() Last Of 500 Routes | 100K | 9.62 s |
-| Dispatch() Last Of 500 Routes | 1M | 100.91 s |
-| Dispatch() Last Of 2000 Routes | 10K | 4.13 s |
-| Dispatch() Last Of 2000 Routes | 100K | 41.53 s |
-| Dispatch() Last Of 2000 Routes | 1M | 430.89 s |
+| Dispatch Last Of 10r | 10K | 24.08 ms |
+| Dispatch Last Of 10r | 100K | 243.32 ms |
+| Dispatch Last Of 10r | 1M | 2.41 s |
+| Dispatch Last Of 100r | 10K | 163.10 ms |
+| Dispatch Last Of 100r | 100K | 1.63 s |
+| Dispatch Last Of 100r | 1M | 16.40 s |
+| Dispatch Last Of 500r | 10K | 792.73 ms |
+| Dispatch Last Of 500r | 100K | 7.95 s |
+| Dispatch Last Of 500r | 1M | 80.09 s |
+| Dispatch Last Of 2000r | 10K | 3.18 s |
+| Dispatch Last Of 2000r | 100K | 32.17 s |
+| Dispatch Last Of 2000r | 1M | 321.92 s |
 
 ## Method Convert
 
 | Test | Iteration | FalconHTTP |
 |---|---|---|
-| MethodFromString() GET (best Case) | 10K | 120.92 us |
-| MethodFromString() GET (best Case) | 100K | 1.20 ms |
-| MethodFromString() GET (best Case) | 1M | 12.11 ms |
-| MethodFromString() OPTIONS (worst Case) | 10K | 267.69 us |
-| MethodFromString() OPTIONS (worst Case) | 100K | 2.71 ms |
-| MethodFromString() OPTIONS (worst Case) | 1M | 26.95 ms |
-| MethodToString() Get | 10K | 54.15 us |
-| MethodToString() Get | 100K | 4.88 ms |
-| MethodToString() Get | 1M | 6.08 ms |
+| MethodFromString GET | 10K | 100.92 us |
+| MethodFromString GET | 100K | 1.00 ms |
+| MethodFromString GET | 1M | 10.46 ms |
+| MethodFromString OPTIONS | 10K | 228.92 us |
+| MethodFromString OPTIONS | 100K | 2.46 ms |
+| MethodFromString OPTIONS | 1M | 24.72 ms |
+| MethodToString Get | 10K | 50.46 us |
+| MethodToString Get | 100K | 510.85 us |
+| MethodToString Get | 1M | 4.62 ms |
 
 ## Mime Lookup
 
 | Test | Iteration | FalconHTTP |
 |---|---|---|
-| MimeTypeFromExtension() Known Extension | 10K | 134.38 us |
-| MimeTypeFromExtension() Known Extension | 100K | 1.33 ms |
-| MimeTypeFromExtension() Known Extension | 1M | 13.61 ms |
-| MimeTypeFromExtension() Unknown Extension | 10K | 106.85 us |
-| MimeTypeFromExtension() Unknown Extension | 100K | 1.10 ms |
-| MimeTypeFromExtension() Unknown Extension | 1M | 10.92 ms |
+| MimeType Known | 10K | 132.62 us |
+| MimeType Known | 100K | 1.24 ms |
+| MimeType Known | 1M | 12.52 ms |
+| MimeType Unknown | 10K | 132.85 us |
+| MimeType Unknown | 100K | 889.23 us |
+| MimeType Unknown | 1M | 8.98 ms |
 
 ## Url Decode
 
 | Test | Iteration | FalconHTTP |
 |---|---|---|
-| UrlDecoder::decode() Mixed Encoding | 10K | 15.47 ms |
-| UrlDecoder::decode() Mixed Encoding | 100K | 156.68 ms |
-| UrlDecoder::decode() Mixed Encoding | 1M | 1.55 s |
+| Decode Mixed Encoding | 10K | 13.02 ms |
+| Decode Mixed Encoding | 100K | 129.57 ms |
+| Decode Mixed Encoding | 1M | 1.30 s |

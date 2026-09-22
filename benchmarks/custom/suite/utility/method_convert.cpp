@@ -26,7 +26,7 @@ static void bench_method_from_string_best_case() {
         (void)method;
     };
 
-    BENCH_SOLO("methodFromString() GET (best case)", f);
+    BENCH_SOLO("methodFromString GET", f);
 }
 
 // Measures methodFromString() on OPTIONS - the last method checked,
@@ -37,7 +37,7 @@ static void bench_method_from_string_worst_case() {
         (void)method;
     };
 
-    BENCH_SOLO("methodFromString() OPTIONS (worst case)", f);
+    BENCH_SOLO("methodFromString OPTIONS", f);
 }
 
 // Measures methodToString() on HttpMethod::Get.
@@ -47,7 +47,7 @@ static void bench_method_to_string() {
         (void)text;
     };
 
-    BENCH_SOLO("methodToString() Get", f);
+    BENCH_SOLO("methodToString Get", f);
 }
 
 // Executes all HTTP method conversion benchmark cases.

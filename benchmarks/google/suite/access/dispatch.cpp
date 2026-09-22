@@ -48,7 +48,7 @@ Router buildRouter() {
 } // namespace
 
 // Measures dispatch() on a request matching the last registered route.
-static void bench_dispatch_hit(benchmark::State& state) {
+static void dispatch_hit(benchmark::State& state) {
     Router router = buildRouter();
 
     for (auto _ : state) {
@@ -61,10 +61,10 @@ static void bench_dispatch_hit(benchmark::State& state) {
         benchmark::DoNotOptimize(result);
     }
 }
-BENCHMARK(bench_dispatch_hit);
+BENCHMARK(dispatch_hit);
 
 // Measures dispatch() on a request matching none of the registered routes.
-static void bench_dispatch_miss(benchmark::State& state) {
+static void dispatch_miss(benchmark::State& state) {
     Router router = buildRouter();
 
     for (auto _ : state) {
@@ -77,4 +77,4 @@ static void bench_dispatch_miss(benchmark::State& state) {
         benchmark::DoNotOptimize(result);
     }
 }
-BENCHMARK(bench_dispatch_miss);
+BENCHMARK(dispatch_miss);

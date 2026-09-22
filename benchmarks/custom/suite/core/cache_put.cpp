@@ -35,7 +35,7 @@ static void bench_cache_put() {
         ++counter;
     };
 
-    BENCH_SOLO("FileCache::put() fresh key", f);
+    BENCH_SOLO("put fresh key", f);
 }
 
 // Executes all FileCache insert benchmark cases.

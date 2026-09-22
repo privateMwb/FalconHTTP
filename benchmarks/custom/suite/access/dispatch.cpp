@@ -61,7 +61,7 @@ static void bench_dispatch_hit() {
         (void)result;
     };
 
-    BENCH_SOLO("Router::dispatch() matching route", f);
+    BENCH_SOLO("dispatch match", f);
 }
 
 // Measures dispatch() on a request matching none of the registered routes.
@@ -78,14 +78,12 @@ static void bench_dispatch_miss() {
         (void)result;
     };
 
-    BENCH_SOLO("Router::dispatch() no matching route", f);
+    BENCH_SOLO("dispatch no match", f);
 }
 
 // Executes both the dispatch-hit and dispatch-miss benchmark cases.
 static void run_benchmarks() {
     bench_dispatch_hit();
-    std::cout << "\n";
-
     bench_dispatch_miss();
 }
 

@@ -60,7 +60,7 @@ std::vector<MiddlewareFn> buildChain() {
 
 // Measures running one request through a 3-middleware chain and a
 // terminal handler.
-static void bench_chain_overhead(benchmark::State& state) {
+static void chain_overhead(benchmark::State& state) {
     std::vector<MiddlewareFn> chain = buildChain();
 
     for (auto _ : state) {
@@ -75,4 +75,4 @@ static void bench_chain_overhead(benchmark::State& state) {
         benchmark::DoNotOptimize(response);
     }
 }
-BENCHMARK(bench_chain_overhead);
+BENCHMARK(chain_overhead);

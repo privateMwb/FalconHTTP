@@ -23,7 +23,7 @@ constexpr std::size_t kCacheCapacity = 2'000'000;
 } // namespace
 
 // Measures put() inserting a fresh key each call, no eviction.
-static void bench_cache_put(benchmark::State& state) {
+static void cache_put(benchmark::State& state) {
     FileCache cache(kCacheCapacity);
     int counter = 0;
 
@@ -35,4 +35,4 @@ static void bench_cache_put(benchmark::State& state) {
         ++counter;
     }
 }
-BENCHMARK(bench_cache_put);
+BENCHMARK(cache_put);

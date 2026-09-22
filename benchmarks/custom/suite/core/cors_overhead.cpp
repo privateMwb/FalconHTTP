@@ -32,7 +32,7 @@ static void bench_cors_overhead() {
         cors(request, response, next);
     };
 
-    BENCH_SOLO("Cors::operator() non-preflight", f);
+    BENCH_SOLO("operator non-preflight", f);
 }
 
 // Executes all Cors overhead benchmark cases.

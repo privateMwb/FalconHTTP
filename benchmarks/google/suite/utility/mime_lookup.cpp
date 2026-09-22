@@ -20,20 +20,20 @@
 using namespace FalconHTTP::HTTP;
 
 // Measures the lookup for a known, mapped extension.
-static void bench_mime_lookup_known(benchmark::State& state) {
+static void mime_lookup_known(benchmark::State& state) {
     for (auto _ : state) {
         std::string_view type = mimeTypeFromExtension(".html");
         benchmark::DoNotOptimize(type);
     }
 }
-BENCHMARK(bench_mime_lookup_known);
+BENCHMARK(mime_lookup_known);
 
 // Measures the lookup for an extension not in the built-in table,
 // which falls all the way through to the default return.
-static void bench_mime_lookup_unknown(benchmark::State& state) {
+static void mime_lookup_unknown(benchmark::State& state) {
     for (auto _ : state) {
         std::string_view type = mimeTypeFromExtension(".unknownext");
         benchmark::DoNotOptimize(type);
     }
 }
-BENCHMARK(bench_mime_lookup_unknown);
+BENCHMARK(mime_lookup_unknown);

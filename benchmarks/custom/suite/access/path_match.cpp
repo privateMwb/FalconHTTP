@@ -31,7 +31,7 @@ static void bench_path_match() {
         (void)matched;
     };
 
-    BENCH_SOLO("PathMatcher::match() two params", f);
+    BENCH_SOLO("match two params", f);
 }
 
 // Executes all path matching benchmark cases.

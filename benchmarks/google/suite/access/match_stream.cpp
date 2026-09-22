@@ -38,7 +38,7 @@ Router buildRouter() {
 
 // Measures matchStream() on a request matching the last registered
 // stream route.
-static void bench_match_stream_hit(benchmark::State& state) {
+static void match_stream_hit(benchmark::State& state) {
     Router router = buildRouter();
 
     for (auto _ : state) {
@@ -50,11 +50,11 @@ static void bench_match_stream_hit(benchmark::State& state) {
         benchmark::DoNotOptimize(handler);
     }
 }
-BENCHMARK(bench_match_stream_hit);
+BENCHMARK(match_stream_hit);
 
 // Measures matchStream() on a request matching none of the registered
 // stream routes.
-static void bench_match_stream_miss(benchmark::State& state) {
+static void match_stream_miss(benchmark::State& state) {
     Router router = buildRouter();
 
     for (auto _ : state) {
@@ -66,4 +66,4 @@ static void bench_match_stream_miss(benchmark::State& state) {
         benchmark::DoNotOptimize(handler);
     }
 }
-BENCHMARK(bench_match_stream_miss);
+BENCHMARK(match_stream_miss);

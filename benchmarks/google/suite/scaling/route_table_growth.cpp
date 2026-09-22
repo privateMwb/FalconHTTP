@@ -45,7 +45,7 @@ Router router2000 = buildRouterWithRoutes(2000);
 } // namespace
 
 // Measures dispatch() to the last route in a 10-route table.
-static void bench_dispatch_10_routes(benchmark::State& state) {
+static void dispatch_routes_10(benchmark::State& state) {
     HttpRequest request;
     request.setMethod(HttpMethod::Get);
     request.setPath("/route-9");
@@ -56,10 +56,10 @@ static void bench_dispatch_10_routes(benchmark::State& state) {
         benchmark::DoNotOptimize(result);
     }
 }
-BENCHMARK(bench_dispatch_10_routes);
+BENCHMARK(dispatch_routes_10);
 
 // Measures dispatch() to the last route in a 100-route table.
-static void bench_dispatch_100_routes(benchmark::State& state) {
+static void dispatch_routes_100(benchmark::State& state) {
     HttpRequest request;
     request.setMethod(HttpMethod::Get);
     request.setPath("/route-99");
@@ -70,10 +70,10 @@ static void bench_dispatch_100_routes(benchmark::State& state) {
         benchmark::DoNotOptimize(result);
     }
 }
-BENCHMARK(bench_dispatch_100_routes);
+BENCHMARK(dispatch_routes_100);
 
 // Measures dispatch() to the last route in a 500-route table.
-static void bench_dispatch_500_routes(benchmark::State& state) {
+static void dispatch_routes_500(benchmark::State& state) {
     HttpRequest request;
     request.setMethod(HttpMethod::Get);
     request.setPath("/route-499");
@@ -84,10 +84,10 @@ static void bench_dispatch_500_routes(benchmark::State& state) {
         benchmark::DoNotOptimize(result);
     }
 }
-BENCHMARK(bench_dispatch_500_routes);
+BENCHMARK(dispatch_routes_500);
 
 // Measures dispatch() to the last route in a 2000-route table.
-static void bench_dispatch_2000_routes(benchmark::State& state) {
+static void dispatch_routes_2000(benchmark::State& state) {
     HttpRequest request;
     request.setMethod(HttpMethod::Get);
     request.setPath("/route-1999");
@@ -98,4 +98,4 @@ static void bench_dispatch_2000_routes(benchmark::State& state) {
         benchmark::DoNotOptimize(result);
     }
 }
-BENCHMARK(bench_dispatch_2000_routes);
+BENCHMARK(dispatch_routes_2000);

@@ -79,33 +79,33 @@ void runOneRequest(const std::vector<MiddlewareFn>& chain) {
 } // namespace
 
 // Measures running one request through a 1-middleware chain.
-static void bench_chain_length_1(benchmark::State& state) {
+static void chain_length_1(benchmark::State& state) {
     for (auto _ : state) {
         runOneRequest(kChain1);
     }
 }
-BENCHMARK(bench_chain_length_1);
+BENCHMARK(chain_length_1);
 
 // Measures running one request through a 5-middleware chain.
-static void bench_chain_length_5(benchmark::State& state) {
+static void chain_length_5(benchmark::State& state) {
     for (auto _ : state) {
         runOneRequest(kChain5);
     }
 }
-BENCHMARK(bench_chain_length_5);
+BENCHMARK(chain_length_5);
 
 // Measures running one request through a 20-middleware chain.
-static void bench_chain_length_20(benchmark::State& state) {
+static void chain_length_20(benchmark::State& state) {
     for (auto _ : state) {
         runOneRequest(kChain20);
     }
 }
-BENCHMARK(bench_chain_length_20);
+BENCHMARK(chain_length_20);
 
 // Measures running one request through a 50-middleware chain.
-static void bench_chain_length_50(benchmark::State& state) {
+static void chain_length_50(benchmark::State& state) {
     for (auto _ : state) {
         runOneRequest(kChain50);
     }
 }
-BENCHMARK(bench_chain_length_50);
+BENCHMARK(chain_length_50);

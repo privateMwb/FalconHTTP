@@ -22,7 +22,7 @@ const std::string kPath = "/static/index.html";
 } // namespace
 
 // Measures get() on an entry the cache already holds.
-static void bench_cache_hit(benchmark::State& state) {
+static void cache_hit(benchmark::State& state) {
     FileCache cache(/*capacity=*/64);
     cache.put(kPath, FileCache::Entry{"<h1>Hello, cache!</h1>", "text/html"});
 
@@ -32,4 +32,4 @@ static void bench_cache_hit(benchmark::State& state) {
         benchmark::DoNotOptimize(found);
     }
 }
-BENCHMARK(bench_cache_hit);
+BENCHMARK(cache_hit);

@@ -43,10 +43,10 @@ Router router;
 // benchmark targets ThreadPool startup cost specifically, not Router
 // construction (which is separately negligible - see Router's default
 // constructor).
-static void bench_server_construction(benchmark::State& state) {
+static void server_construction(benchmark::State& state) {
     for (auto _ : state) {
         Server server(router, /*threadCount=*/4);
         benchmark::DoNotOptimize(server);
     }
 }
-BENCHMARK(bench_server_construction);
+BENCHMARK(server_construction);

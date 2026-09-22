@@ -50,7 +50,7 @@ const std::string kRawRequest = buildRawRequest();
 static void bench_parse_header_heavy() {
     auto f = [&] { HttpRequest request = HttpParser::parse(kRawRequest); };
 
-    BENCH_SOLO("parse() 50 headers", f);
+    BENCH_SOLO("parse 50 headers", f);
 }
 
 // Measures serialize() on a response with 50 headers.
@@ -59,7 +59,7 @@ static void bench_serialize_header_heavy() {
 
     auto f = [&] { std::string output = HttpSerializer::serialize(response); };
 
-    BENCH_SOLO("serialize() 50 headers", f);
+    BENCH_SOLO("serialize 50 headers", f);
 }
 
 // Executes both the header-heavy parsing and serialization benchmark cases.
