@@ -18,7 +18,7 @@ using namespace FalconHTTP::HTTP;
 
 // Verifies a user-set Content-Length does not appear in the output -
 // only the serializer's own computed value does.
-static void user_set_content_length_is_not_duplicated() {
+static void content_length_no_dup() {
     HttpResponse response;
     response.setHeader("Content-Length", "999");
     response.setBody("abc");
@@ -35,7 +35,7 @@ static void user_set_content_length_is_not_duplicated() {
 
 // Verifies a user-set Connection header does not appear in the output
 // - only the serializer's own "Connection: close" does.
-static void user_set_connection_is_not_duplicated() {
+static void connection_no_dup() {
     HttpResponse response;
     response.setHeader("Connection", "keep-alive");
 
@@ -51,7 +51,7 @@ static void user_set_connection_is_not_duplicated() {
 
 // Verifies other user-set headers are unaffected by the fix - only
 // Content-Length and Connection are specially handled.
-static void other_headers_still_pass_through_normally() {
+static void other_headers_pass_through() {
     HttpResponse response;
     response.setHeader("X-Custom", "value");
 
@@ -62,9 +62,9 @@ static void other_headers_still_pass_through_normally() {
 
 // Executes all duplicate-header regression test cases.
 static void run_tests() {
-    RUN(user_set_content_length_is_not_duplicated);
-    RUN(user_set_connection_is_not_duplicated);
-    RUN(other_headers_still_pass_through_normally);
+    RUN(content_length_no_dup);
+    RUN(connection_no_dup);
+    RUN(other_headers_pass_through);
 }
 
 REGISTER_TEST_SUITE();

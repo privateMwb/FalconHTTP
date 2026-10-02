@@ -107,7 +107,7 @@ std::string sendRawRequest(uint16_t port, const std::string& request) {
 // Verifies a header block larger than the configured maxHeaderSize,
 // sent without ever completing the terminating blank line, is
 // rejected with 431.
-static void oversized_unterminated_headers_are_rejected_with_431() {
+static void oversized_headers_431() {
     ServerConfig config;
     config.maxHeaderSize = 64; // tiny cap to keep the test fast
 
@@ -136,7 +136,7 @@ static void oversized_unterminated_headers_are_rejected_with_431() {
 
 // Verifies a normal, small request under the configured maxHeaderSize
 // is accepted normally - the cap must not be overly aggressive.
-static void small_header_block_is_accepted() {
+static void small_headers_accepted() {
     ServerConfig config;
     config.maxHeaderSize = 64;
 
@@ -163,8 +163,8 @@ static void small_header_block_is_accepted() {
 
 // Executes all oversized-header regression test cases.
 static void run_tests() {
-    RUN(oversized_unterminated_headers_are_rejected_with_431);
-    RUN(small_header_block_is_accepted);
+    RUN(oversized_headers_431);
+    RUN(small_headers_accepted);
 }
 
 REGISTER_TEST_SUITE();

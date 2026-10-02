@@ -23,7 +23,7 @@ using namespace FalconHTTP::Routing;
 
 // Verifies a single path param parsed from a raw request reaches the
 // handler correctly.
-static void single_path_param_reaches_handler() {
+static void single_path_param() {
     Router router;
     std::string captured;
 
@@ -40,7 +40,7 @@ static void single_path_param_reaches_handler() {
 
 // Verifies multiple path params in one pattern all bind correctly
 // when the request is driven through the real parser.
-static void multiple_path_params_reach_handler() {
+static void multi_path_params() {
     Router router;
     std::string capturedUser;
     std::string capturedPost;
@@ -60,7 +60,7 @@ static void multiple_path_params_reach_handler() {
 
 // Verifies a percent-encoded query parameter is decoded before
 // reaching the handler.
-static void query_param_is_decoded_before_reaching_handler() {
+static void query_param_decoded() {
     Router router;
     std::string captured;
 
@@ -78,7 +78,7 @@ static void query_param_is_decoded_before_reaching_handler() {
 
 // Verifies a path param and a query param on the same request both
 // reach the handler correctly at once.
-static void path_and_query_params_coexist() {
+static void path_query_coexist() {
     Router router;
     std::string capturedId;
     std::string capturedSort;
@@ -98,10 +98,10 @@ static void path_and_query_params_coexist() {
 
 // Executes all route parameter extraction test cases.
 static void run_tests() {
-    RUN(single_path_param_reaches_handler);
-    RUN(multiple_path_params_reach_handler);
-    RUN(query_param_is_decoded_before_reaching_handler);
-    RUN(path_and_query_params_coexist);
+    RUN(single_path_param);
+    RUN(multi_path_params);
+    RUN(query_param_decoded);
+    RUN(path_query_coexist);
 }
 
 REGISTER_TEST_SUITE();

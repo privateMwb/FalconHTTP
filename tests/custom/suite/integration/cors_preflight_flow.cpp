@@ -14,7 +14,7 @@ using namespace FalconHTTP::Middleware;
 
 // Verifies an OPTIONS request receives 204 and the chain does not
 // continue past Cors - `next` must not be invoked.
-static void options_request_short_circuits_with_204() {
+static void options_204_short_circuit() {
     Cors cors("https://example.com");
     bool nextCalled = false;
 
@@ -32,7 +32,7 @@ static void options_request_short_circuits_with_204() {
 
 // Verifies a non-OPTIONS request still receives the CORS headers, but
 // the chain continues - `next` is invoked.
-static void non_options_request_gets_headers_and_continues() {
+static void non_options_continues() {
     Cors cors("https://example.com");
     bool nextCalled = false;
 
@@ -50,7 +50,7 @@ static void non_options_request_gets_headers_and_continues() {
 
 // Verifies the configured allowed-origin value (rather than the
 // default "*") is what gets reflected in the response.
-static void reflects_configured_allowed_origin() {
+static void reflects_allowed_origin() {
     Cors defaultCors;
     Cors customCors("https://my-app.example");
 
@@ -69,9 +69,9 @@ static void reflects_configured_allowed_origin() {
 
 // Executes all CORS preflight flow test cases.
 static void run_tests() {
-    RUN(options_request_short_circuits_with_204);
-    RUN(non_options_request_gets_headers_and_continues);
-    RUN(reflects_configured_allowed_origin);
+    RUN(options_204_short_circuit);
+    RUN(non_options_continues);
+    RUN(reflects_allowed_origin);
 }
 
 REGISTER_TEST_SUITE();

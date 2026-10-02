@@ -110,7 +110,7 @@ std::string sendRawRequest(uint16_t port, const std::string& request) {
 // maxBodySize is rejected with 413, without the client needing to
 // actually send that many body bytes - the check must happen against
 // the declared length before the read loop begins.
-static void oversized_content_length_is_rejected_with_413() {
+static void oversized_body_413() {
     ServerConfig config;
     config.maxBodySize = 16; // tiny cap to keep the test fast
 
@@ -140,7 +140,7 @@ static void oversized_content_length_is_rejected_with_413() {
 
 // Verifies a request within the configured maxBodySize is accepted
 // normally - the cap must not be overly aggressive.
-static void body_within_limit_is_accepted() {
+static void body_within_limit_ok() {
     ServerConfig config;
     config.maxBodySize = 16;
 
@@ -173,8 +173,8 @@ static void body_within_limit_is_accepted() {
 
 // Executes all oversized-body regression test cases.
 static void run_tests() {
-    RUN(oversized_content_length_is_rejected_with_413);
-    RUN(body_within_limit_is_accepted);
+    RUN(oversized_body_413);
+    RUN(body_within_limit_ok);
 }
 
 REGISTER_TEST_SUITE();

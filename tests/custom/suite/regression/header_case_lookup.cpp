@@ -18,7 +18,7 @@ using namespace FalconHTTP::HTTP;
 
 // Verifies a header set with typical mixed-case ("Content-Type") is
 // found via a differently-cased lookup on HttpRequest.
-static void request_header_lookup_survives_case_mismatch() {
+static void request_header_case_insensitive() {
     HttpRequest request;
     request.setHeader("Content-Type", "application/json");
 
@@ -27,7 +27,7 @@ static void request_header_lookup_survives_case_mismatch() {
 }
 
 // Verifies the same on HttpResponse.
-static void response_header_lookup_survives_case_mismatch() {
+static void response_header_case_insensitive() {
     HttpResponse response;
     response.setHeader("Content-Type", "application/json");
 
@@ -37,8 +37,8 @@ static void response_header_lookup_survives_case_mismatch() {
 
 // Executes all header case-insensitivity regression test cases.
 static void run_tests() {
-    RUN(request_header_lookup_survives_case_mismatch);
-    RUN(response_header_lookup_survives_case_mismatch);
+    RUN(request_header_case_insensitive);
+    RUN(response_header_case_insensitive);
 }
 
 REGISTER_TEST_SUITE();

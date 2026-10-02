@@ -28,7 +28,7 @@ using namespace FalconHTTP::Middleware;
 
 // Verifies concurrent Logger invocations each produce one complete,
 // non-corrupted line, with none interleaved or truncated.
-static void concurrent_logging_produces_intact_lines() {
+static void concurrent_log_intact_lines() {
     constexpr int threadCount = 16;
     constexpr int callsPerThread = 25;
 
@@ -90,7 +90,7 @@ static void concurrent_logging_produces_intact_lines() {
 
 // Executes all Logger thread-safety test cases.
 static void run_tests() {
-    RUN(concurrent_logging_produces_intact_lines);
+    RUN(concurrent_log_intact_lines);
 }
 
 REGISTER_TEST_SUITE();

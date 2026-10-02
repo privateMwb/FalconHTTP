@@ -18,7 +18,7 @@ using namespace FalconHTTP::Routing;
 
 // Verifies a request to a registered path with a method no route
 // handles for that path returns MethodNotAllowed, not NotFound.
-static void wrong_method_on_known_path_returns_method_not_allowed() {
+static void wrong_method_405() {
     Router router;
     router.get("/items", [](const HttpRequest&, HttpResponse&) {});
 
@@ -33,7 +33,7 @@ static void wrong_method_on_known_path_returns_method_not_allowed() {
 // Verifies a request to a path with no registered route at all still
 // correctly returns NotFound, not MethodNotAllowed - the fix must not
 // have over-corrected to always report MethodNotAllowed.
-static void unknown_path_still_returns_not_found() {
+static void unknown_path_404() {
     Router router;
     router.get("/items", [](const HttpRequest&, HttpResponse&) {});
 
@@ -48,7 +48,7 @@ static void unknown_path_still_returns_not_found() {
 // Verifies a path registered under multiple methods correctly returns
 // MethodNotAllowed for a third, unregistered method - not just a
 // simple single-route check.
-static void method_not_allowed_with_multiple_registered_methods() {
+static void method_not_allowed_multi() {
     Router router;
     router.get("/items", [](const HttpRequest&, HttpResponse&) {});
     router.post("/items", [](const HttpRequest&, HttpResponse&) {});
@@ -63,9 +63,9 @@ static void method_not_allowed_with_multiple_registered_methods() {
 
 // Executes all method-not-allowed regression test cases.
 static void run_tests() {
-    RUN(wrong_method_on_known_path_returns_method_not_allowed);
-    RUN(unknown_path_still_returns_not_found);
-    RUN(method_not_allowed_with_multiple_registered_methods);
+    RUN(wrong_method_405);
+    RUN(unknown_path_404);
+    RUN(method_not_allowed_multi);
 }
 
 REGISTER_TEST_SUITE();

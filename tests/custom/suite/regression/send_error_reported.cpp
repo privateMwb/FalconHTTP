@@ -20,7 +20,7 @@ using namespace FalconHTTP::Core;
 // Verifies sendAll() returns false when the underlying socket has
 // already been closed - the send() call must fail, and that failure
 // must be correctly reported rather than silently treated as success.
-static void reports_failure_on_closed_socket() {
+static void fail_closed_socket() {
     Connection connection(Socket::createTcp());
     connection.close();
 
@@ -34,7 +34,7 @@ static void reports_failure_on_closed_socket() {
 // unconnected) TCP socket does not silently report success either -
 // an unconnected socket cannot actually deliver data, so send() on it
 // should fail and sendAll() must reflect that.
-static void reports_failure_on_unconnected_socket() {
+static void fail_unconnected_socket() {
     Connection connection(Socket::createTcp());
 
     const char data[] = "test";
@@ -45,8 +45,8 @@ static void reports_failure_on_unconnected_socket() {
 
 // Executes all sendAll() error-reporting regression test cases.
 static void run_tests() {
-    RUN(reports_failure_on_closed_socket);
-    RUN(reports_failure_on_unconnected_socket);
+    RUN(fail_closed_socket);
+    RUN(fail_unconnected_socket);
 }
 
 REGISTER_TEST_SUITE();

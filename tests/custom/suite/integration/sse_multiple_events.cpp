@@ -81,7 +81,7 @@ SocketHandle connectToLoopback(uint16_t port) {
 // timing, since the latter is at the mercy of when the test process's
 // own thread happens to get scheduled and can't reliably distinguish
 // "delivered incrementally" from "the client just read late."
-static void streaming_route_delivers_multiple_events() {
+static void sse_multiple_events() {
     const uint16_t port = 18611;
 
     std::vector<std::chrono::steady_clock::time_point> sendTimestamps;
@@ -161,7 +161,7 @@ static void streaming_route_delivers_multiple_events() {
 
 // Executes the streaming-events integration test case.
 static void run_tests() {
-    RUN(streaming_route_delivers_multiple_events);
+    RUN(sse_multiple_events);
 }
 
 REGISTER_TEST_SUITE();
