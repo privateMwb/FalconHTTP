@@ -26,7 +26,7 @@ using namespace FalconHTTP::Middleware;
 // Verifies concurrent exceptions caught by Recovery each produce one
 // complete, non-corrupted error line, with none interleaved or
 // truncated, and every response still ends up as 500.
-static void concurrent_recovery_produces_intact_lines() {
+static void concurrent_recovery_intact_lines() {
     constexpr int threadCount = 16;
     constexpr int callsPerThread = 25;
 
@@ -93,7 +93,7 @@ static void concurrent_recovery_produces_intact_lines() {
 
 // Executes all Recovery thread-safety test cases.
 static void run_tests() {
-    RUN(concurrent_recovery_produces_intact_lines);
+    RUN(concurrent_recovery_intact_lines);
 }
 
 REGISTER_TEST_SUITE();

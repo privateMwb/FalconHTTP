@@ -97,7 +97,7 @@ std::string recvAll(SocketHandle fd) {
 // Verifies the auto-resolved streaming cap (half of threadCount,
 // minimum 1) rejects a second concurrent subscriber with 503, then
 // admits a new one once the first disconnects.
-static void concurrent_streams_beyond_cap_get_503() {
+static void streams_beyond_cap_503() {
     const uint16_t port = 18615;
 
     ServerConfig config;
@@ -164,7 +164,7 @@ static void concurrent_streams_beyond_cap_get_503() {
 
 // Executes the streaming-capacity concurrency test case.
 static void run_tests() {
-    RUN(concurrent_streams_beyond_cap_get_503);
+    RUN(streams_beyond_cap_503);
 }
 
 REGISTER_TEST_SUITE();

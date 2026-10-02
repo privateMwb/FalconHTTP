@@ -35,7 +35,7 @@ using namespace FalconHTTP::Routing;
 // Verifies many threads dispatching distinct requests concurrently
 // against one shared Router each reach the correct handler with the
 // correct path param, and no thread observes another thread's data.
-static void concurrent_dispatch_has_no_cross_request_leakage() {
+static void no_cross_request_leak() {
     constexpr int threadCount = 16;
     constexpr int requestsPerThread = 50;
 
@@ -85,7 +85,7 @@ static void concurrent_dispatch_has_no_cross_request_leakage() {
 // on overlapping paths resolves each request to the correct handler,
 // even under contention (exercises the pathMatchedOtherMethod check
 // in Router::dispatch() running concurrently across threads).
-static void concurrent_dispatch_resolves_correct_method_under_contention() {
+static void dispatch_correct_under_contention() {
     Router router;
     std::atomic<int> getCount{0};
     std::atomic<int> postCount{0};
@@ -133,8 +133,8 @@ static void concurrent_dispatch_resolves_correct_method_under_contention() {
 
 // Executes all concurrent dispatch test cases.
 static void run_tests() {
-    RUN(concurrent_dispatch_has_no_cross_request_leakage);
-    RUN(concurrent_dispatch_resolves_correct_method_under_contention);
+    RUN(no_cross_request_leak);
+    RUN(dispatch_correct_under_contention);
 }
 
 REGISTER_TEST_SUITE();

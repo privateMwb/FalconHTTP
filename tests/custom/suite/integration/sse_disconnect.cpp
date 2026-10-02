@@ -92,7 +92,7 @@ std::string sendRawRequest(uint16_t port, const std::string& raw) {
 // (via SseConnection::isConnected() going false) rather than hanging
 // or crashing, and that the server keeps serving normal requests
 // afterward.
-static void handler_notices_mid_stream_disconnect() {
+static void sse_mid_stream_disconnect() {
     const uint16_t port = 18612;
 
     std::atomic<bool> disconnectNoticed{false};
@@ -148,7 +148,7 @@ static void handler_notices_mid_stream_disconnect() {
 
 // Executes the streaming-disconnect integration test case.
 static void run_tests() {
-    RUN(handler_notices_mid_stream_disconnect);
+    RUN(sse_mid_stream_disconnect);
 }
 
 REGISTER_TEST_SUITE();

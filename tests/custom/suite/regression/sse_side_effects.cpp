@@ -105,7 +105,7 @@ std::string recvChunk(SocketHandle fd) {
 // Verifies a normal route's response is exactly as it was before
 // streaming existed, even on a Router that also has a Stream-kind
 // route, and even right after that streaming route was used.
-static void normal_route_unaffected_by_streaming_route() {
+static void normal_route_unaffected() {
     const uint16_t port = 18613;
 
     Router router;
@@ -145,7 +145,7 @@ static void normal_route_unaffected_by_streaming_route() {
 // Verifies Cors middleware's headers, set on the shared HttpResponse
 // ahead of Server::runChain()'s streaming branch, are forwarded into
 // the SSE preamble rather than silently dropped.
-static void cors_headers_reach_sse_preamble() {
+static void cors_headers_reach_sse() {
     const uint16_t port = 18614;
 
     Router router;
@@ -174,8 +174,8 @@ static void cors_headers_reach_sse_preamble() {
 
 // Executes both SSE regression test cases.
 static void run_tests() {
-    RUN(normal_route_unaffected_by_streaming_route);
-    RUN(cors_headers_reach_sse_preamble);
+    RUN(normal_route_unaffected);
+    RUN(cors_headers_reach_sse);
 }
 
 REGISTER_TEST_SUITE();

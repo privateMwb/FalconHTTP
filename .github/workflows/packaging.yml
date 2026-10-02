@@ -58,12 +58,12 @@ jobs:
         # transitive dependency tree has 14 entries, too easy to get
         # wrong by hand) and verified to actually install clean with
         # `pip install --require-hashes` before being committed here.
-        # To bump the conan version: edit packaging/requirements-conan.in,
+        # To bump the conan version: edit packaging/requirements.in,
         # then regenerate with:
         #   pip-compile --generate-hashes \
-        #     --output-file=packaging/requirements-conan.txt \
-        #     packaging/requirements-conan.in
-        run: pip install --require-hashes -r packaging/requirements-conan.txt
+        #     --output-file=packaging/requirements.txt \
+        #     packaging/requirements.in
+        run: pip install --require-hashes -r packaging/requirements.txt
 
       - name: Detect default profile
         run: conan profile detect --force

@@ -22,7 +22,7 @@ using namespace FalconHTTP::FileServer;
 
 // Verifies many threads writing distinct keys concurrently all land
 // correctly, with capacity large enough to guarantee no eviction.
-static void distinct_keys_survive_concurrent_writes() {
+static void distinct_keys_concurrent() {
     constexpr int threadCount = 16;
 
     FileCache cache(/*capacity=*/threadCount + 1);
@@ -52,7 +52,7 @@ static void distinct_keys_survive_concurrent_writes() {
 // from multiple threads completes without crashing, and any
 // successful read returns a value that was actually written by some
 // thread - never a torn mix of two writes.
-static void shared_key_survives_concurrent_mixed_access() {
+static void shared_key_concurrent() {
     constexpr int threadCount = 16;
     constexpr int operationsPerThread = 50;
     const std::string sharedKey = "/shared";
@@ -101,8 +101,8 @@ static void shared_key_survives_concurrent_mixed_access() {
 
 // Executes all FileCache concurrent access test cases.
 static void run_tests() {
-    RUN(distinct_keys_survive_concurrent_writes);
-    RUN(shared_key_survives_concurrent_mixed_access);
+    RUN(distinct_keys_concurrent);
+    RUN(shared_key_concurrent);
 }
 
 REGISTER_TEST_SUITE();
