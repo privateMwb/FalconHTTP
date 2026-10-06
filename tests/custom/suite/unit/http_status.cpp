@@ -22,6 +22,15 @@ static void returns_common_reason_phrases() {
     CHK(statusReasonPhrase(HttpStatus::NotFound) == "Not Found");
 }
 
+// Verifies the method-preserving redirect codes return their phrases
+// and keep their RFC 9110 numeric values.
+static void returns_redirect_phrases() {
+    CHK(statusReasonPhrase(HttpStatus::TemporaryRedirect) == "Temporary Redirect");
+    CHK(statusReasonPhrase(HttpStatus::PermanentRedirect) == "Permanent Redirect");
+    CHK(static_cast<int>(HttpStatus::TemporaryRedirect) == 307);
+    CHK(static_cast<int>(HttpStatus::PermanentRedirect) == 308);
+}
+
 // Verifies the codes tied to Router::dispatch()'s DispatchResult and
 // Server's DoS caps return their correct phrases.
 static void returns_dispatch_and_cap_phrases() {
@@ -46,6 +55,7 @@ static void returns_server_error_phrases() {
 // Executes all statusReasonPhrase() test cases.
 static void run_tests() {
     RUN(returns_common_reason_phrases);
+    RUN(returns_redirect_phrases);
     RUN(returns_dispatch_and_cap_phrases);
     RUN(returns_rate_limit_phrase);
     RUN(returns_server_error_phrases);

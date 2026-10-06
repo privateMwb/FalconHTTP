@@ -20,6 +20,10 @@ std::string_view statusReasonPhrase(HttpStatus status) noexcept {
         return "No Content";
     case HttpStatus::Found:
         return "Found";
+    case HttpStatus::TemporaryRedirect:
+        return "Temporary Redirect";
+    case HttpStatus::PermanentRedirect:
+        return "Permanent Redirect";
     case HttpStatus::BadRequest:
         return "Bad Request";
     case HttpStatus::Unauthorized:

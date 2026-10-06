@@ -8,7 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Nothing yet.
+- `Client::HttpClient`: blocking HTTP/1.1 client (one request per
+  connection) with connect and per-call I/O timeouts; failures yield
+  `std::nullopt`, error statuses are returned as responses.
+- `Socket::connect(address, port, timeout)`, `Socket::setReceiveTimeout()`,
+  and `Socket::setSendTimeout()`.
+- `HttpStatus::TemporaryRedirect` (307) and `HttpStatus::PermanentRedirect`
+  (308), the method-preserving redirects.
+
+### Fixed
+- `Socket::connect(address, port)` was declared in `Socket.h` but never
+  defined, so any caller failed to link. It is now implemented.
 
 ## [1.0.0] - 2026-09-05
 

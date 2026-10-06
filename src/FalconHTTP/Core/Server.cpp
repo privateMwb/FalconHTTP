@@ -67,14 +67,14 @@ std::size_t resolveMaxStreamingConnections(std::size_t configured, std::size_t t
 } // namespace
 
 Server::Server(Routing::Router& router, std::size_t threadCount) noexcept
-    : router_(&router), pool_(threadCount),
-      maxStreamingConnections_(resolveMaxStreamingConnections(0, threadCount)) {}
+    : router_(&router), maxStreamingConnections_(resolveMaxStreamingConnections(0, threadCount)),
+      pool_(threadCount) {}
 
 Server::Server(Routing::Router& router, const Config::ServerConfig& config) noexcept
-    : router_(&router), pool_(config.threadCount), configuredPort_(config.port),
-      maxHeaderSize_(config.maxHeaderSize), maxBodySize_(config.maxBodySize),
-      maxStreamingConnections_(
-          resolveMaxStreamingConnections(config.maxStreamingConnections, config.threadCount)) {}
+    : router_(&router), configuredPort_(config.port), maxHeaderSize_(config.maxHeaderSize),
+      maxBodySize_(config.maxBodySize), maxStreamingConnections_(resolveMaxStreamingConnections(
+                                            config.maxStreamingConnections, config.threadCount)),
+      pool_(config.threadCount) {}
 
 // ============================================================
 //  Section 2 — Middleware Registration

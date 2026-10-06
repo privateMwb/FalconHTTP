@@ -111,7 +111,6 @@ class Server {
     // Storage
     Listener listener_;
     Routing::Router* router_ = nullptr;
-    ThreadPool pool_;
     Vector<Middleware::MiddlewareFn> middleware_;
     std::atomic<bool> running_{false};
 
@@ -146,6 +145,13 @@ class Server {
     /// is internal bookkeeping, not part of that observable state -
     /// same rationale as a mutex guarding const-method-visible caches.
     mutable std::atomic<std::size_t> activeStreams_{0};
+
+    /// Worker pool running handleConnection() tasks. MUST stay the last
+    /// data member: members are destroyed in reverse declaration order,
+    /// so this guarantees the pool is torn down (and its in-flight tasks
+    /// finish) while listener_, router_, middleware_, activeStreams_ and
+    /// the size caps - all of which those tasks read - are still alive.
+    ThreadPool pool_;
 
   public:
     // Constructors

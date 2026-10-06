@@ -59,6 +59,7 @@ single function in isolation.
 | `empty_request.cpp` | A connection that sends no data at all closes cleanly without hanging the server |
 | `header_disconnect.cpp` | A client disconnecting mid-header-block closes cleanly without hanging the server |
 | `body_disconnect.cpp` | A client disconnecting mid-body closes cleanly without hanging the server |
+| `client_roundtrip.cpp` | HttpClient against a real Server: GET/POST round trips, error statuses, unfollowed 307, refused connection and slow-handler timeouts |
 | `parse_exception.cpp` | A request HttpParser::parse() can't parse is caught and reported as 500, not a crash |
 
 ---
@@ -122,4 +123,5 @@ testable unit of behavior, independent of the categories above.
 | `response_json.cpp` | setJson() body and Content-Type behavior |
 | `serializer_output.cpp` | HttpSerializer::serialize() status line, headers, and body assembly |
 | `socket_options.cpp` | setReuseAddr()/setNonBlocking()/setNoDelay() |
+| `socket_connect.cpp` | connect() (blocking and timed), setReceiveTimeout()/setSendTimeout(), and rejection of bad input |
 | `router_registration.cpp` | get()/post()/put()/del() registration and dispatch matching |

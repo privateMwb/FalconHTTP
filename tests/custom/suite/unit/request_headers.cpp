@@ -45,7 +45,7 @@ static void reports_absent_header() {
 // Verifies setting the same header name with different casing updates
 // the single stored entry rather than creating a duplicate - the most
 // recent value wins and only one logical entry exists.
-static void same_header_different_case_updates_single_entry() {
+static void header_diff_case_updates() {
     HttpRequest request;
     request.setHeader("Accept", "text/html");
     request.setHeader("ACCEPT", "application/json");
@@ -58,7 +58,7 @@ static void run_tests() {
     RUN(round_trips_header_value);
     RUN(header_lookup_is_case_insensitive);
     RUN(reports_absent_header);
-    RUN(same_header_different_case_updates_single_entry);
+    RUN(header_diff_case_updates);
 }
 
 REGISTER_TEST_SUITE();

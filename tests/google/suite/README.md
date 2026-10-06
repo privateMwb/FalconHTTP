@@ -63,6 +63,7 @@ single function in isolation.
 | `empty_request.cpp` | A connection that sends no data at all closes cleanly without hanging the server: `EmptyRequest` |
 | `header_disconnect.cpp` | A client disconnecting mid-header-block closes cleanly without hanging the server: `HeaderDisconnect` |
 | `body_disconnect.cpp` | A client disconnecting mid-body closes cleanly without hanging the server: `BodyDisconnect` |
+| `client_roundtrip.cpp` | HttpClient against a real Server: GET/POST round trips, error statuses, unfollowed 307, refused connection and slow-handler timeouts |
 | `parse_exception.cpp` | A request HttpParser::parse() can't parse is caught and reported as 500, not a crash: `ParseException` |
 
 ---
@@ -118,7 +119,7 @@ testable unit of behavior, independent of the categories above.
 | `url_decode.cpp` | UrlDecoder::decode() percent-decoding and +-as-space: `UrlDecode` |
 | `path_match.cpp` | PathMatcher::match() segment matching and :param extraction: `PathMatch` |
 | `http_method.cpp` | methodFromString()/methodToString() conversions: `HttpMethod` |
-| `http_status.cpp` | statusReasonPhrase() lookup across all codes: `HttpStatus` |
+| `http_status.cpp` | statusReasonPhrase() lookup across all codes |
 | `mime_lookup.cpp` | mimeTypeFromExtension() known and unknown extensions: `MimeLookup` |
 | `request_headers.cpp` | HttpRequest header set/get, case-insensitive lookup: `RequestHeaders` |
 | `response_headers.cpp` | HttpResponse header set/get, case-insensitive lookup: `ResponseHeaders` |
@@ -126,6 +127,7 @@ testable unit of behavior, independent of the categories above.
 | `response_json.cpp` | setJson() body and Content-Type behavior: `ResponseJson` |
 | `serializer_output.cpp` | HttpSerializer::serialize() status line, headers, and body assembly: `SerializerOutput` |
 | `socket_options.cpp` | setReuseAddr()/setNonBlocking()/setNoDelay(): `SocketOptions` |
+| `socket_connect.cpp` | connect() (blocking and timed), setReceiveTimeout()/setSendTimeout(), and rejection of bad input |
 | `router_registration.cpp` | get()/post()/put()/del() registration and dispatch matching: `RouterRegistration` |
 
 ---

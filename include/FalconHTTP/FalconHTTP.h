@@ -21,6 +21,7 @@
 #include <FalconHTTP/Core/Listener.h>
 #include <FalconHTTP/Core/Server.h>
 #include <FalconHTTP/Core/Socket.h>
+#include <FalconHTTP/Client/HttpClient.h>          // FalconHTTP::Client
 #include <FalconHTTP/HTTP/HttpRequest.h>            // FalconHTTP::HTTP
 #include <FalconHTTP/HTTP/HttpMethod.h>
 #include <FalconHTTP/HTTP/HttpParser.h>
@@ -59,7 +60,7 @@
  * @details
  * `using namespace FalconHTTP;` only pulls in names declared directly in
  * `FalconHTTP` - since every actual type lives in a sub-namespace
- * (`FalconHTTP::Core`, `FalconHTTP::HTTP`, `FalconHTTP::Routing`,
+ * (`FalconHTTP::Core`, `FalconHTTP::Client`, `FalconHTTP::HTTP`, `FalconHTTP::Routing`,
  * `FalconHTTP::Middleware`, `FalconHTTP::FileServer`,
  * `FalconHTTP::Utility`, `FalconHTTP::Config`), this does NOT produce
  * flat names like `rain::Socket` or `rain::HttpRequest`. What it gives

@@ -2,6 +2,7 @@
 
 // clang-format off
 #include <atomic>  // std::atomic
+#include <chrono>  // std::chrono::milliseconds - connect()/timeout parameters
 #include <cstddef> // std::size_t, std::ptrdiff_t
 #include <cstdint> // fixed-width integer types
 #include <string>  // std::string
@@ -98,6 +99,27 @@ class Socket {
      */
     [[nodiscard]] bool connect(const std::string& address, uint16_t port) noexcept;
 
+    /**
+     * @brief Connects like connect(address, port), but gives up after
+     *        @p timeout instead of waiting out the OS's own connect
+     *        timeout (often minutes for an unreachable host).
+     *
+     * @param address IPv4 address in dotted-decimal notation.
+     * @param port Destination TCP port.
+     * @param timeout Maximum time to wait for the connection to
+     *        complete. Must be positive.
+     *
+     * @return true if connected within @p timeout; false on refusal,
+     *         error, or timeout.
+     *
+     * @note Leaves the socket in blocking mode on return, whatever the
+     *       outcome. After a false return the Socket should be
+     *       discarded, not retried: the failed attempt's state is
+     *       platform-dependent.
+     */
+    [[nodiscard]] bool connect(const std::string& address, uint16_t port,
+                               std::chrono::milliseconds timeout) noexcept;
+
     // Socket Options
 
     /// Sets/clears `SO_REUSEADDR`. @return false if the underlying
@@ -114,6 +136,32 @@ class Socket {
     /// @return false if the underlying `setsockopt` call failed or
     ///         this Socket is invalid.
     [[nodiscard]] bool setNoDelay(bool enable) noexcept;
+
+    /**
+     * @brief Bounds how long a blocking receive() may wait for data.
+     *
+     * @param timeout Maximum wait per receive() call; zero disables the
+     *        timeout (the default, wait forever).
+     *
+     * @return false if the underlying `setsockopt` call failed or this
+     *         Socket is invalid.
+     *
+     * @note A timed-out receive() returns a negative value, the same
+     *       as any other receive error; a peer closing the connection
+     *       still returns 0.
+     */
+    [[nodiscard]] bool setReceiveTimeout(std::chrono::milliseconds timeout) noexcept;
+
+    /**
+     * @brief Bounds how long a blocking send() may wait for buffer space.
+     *
+     * @param timeout Maximum wait per send() call; zero disables the
+     *        timeout (the default, wait forever).
+     *
+     * @return false if the underlying `setsockopt` call failed or this
+     *         Socket is invalid.
+     */
+    [[nodiscard]] bool setSendTimeout(std::chrono::milliseconds timeout) noexcept;
 
     // I/O
 
