@@ -256,7 +256,8 @@ bool Socket::setReceiveTimeout(std::chrono::milliseconds timeout) noexcept {
     const long long ms = std::max<long long>(timeout.count(), 0);
 
 #ifdef _WIN32
-    const DWORD value = static_cast<DWORD>(std::min<long long>(ms, std::numeric_limits<int>::max()));
+    const DWORD value =
+        static_cast<DWORD>(std::min<long long>(ms, std::numeric_limits<int>::max()));
     return ::setsockopt(fd_, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char*>(&value),
                         sizeof(value)) == 0;
 #else
@@ -271,7 +272,8 @@ bool Socket::setSendTimeout(std::chrono::milliseconds timeout) noexcept {
     const long long ms = std::max<long long>(timeout.count(), 0);
 
 #ifdef _WIN32
-    const DWORD value = static_cast<DWORD>(std::min<long long>(ms, std::numeric_limits<int>::max()));
+    const DWORD value =
+        static_cast<DWORD>(std::min<long long>(ms, std::numeric_limits<int>::max()));
     return ::setsockopt(fd_, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<const char*>(&value),
                         sizeof(value)) == 0;
 #else

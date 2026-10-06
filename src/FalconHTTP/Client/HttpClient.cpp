@@ -139,14 +139,14 @@ HttpClient::HttpClient(ClientOptions options) noexcept : options_(options) {}
 //  Section 3 — Sending
 // ============================================================
 
-std::optional<ClientResponse> HttpClient::send(
-    HTTP::HttpMethod method, const std::string& host, uint16_t port, const std::string& path,
-    const std::string& body, const HashMapPro::HashMap<std::string, std::string>& headers) const {
+std::optional<ClientResponse>
+HttpClient::send(HTTP::HttpMethod method, const std::string& host, uint16_t port,
+                 const std::string& path, const std::string& body,
+                 const HashMapPro::HashMap<std::string, std::string>& headers) const {
     Core::Socket socket = Core::Socket::createTcp();
 
     if (!socket.isValid() || !socket.connect(host, port, options_.connectTimeout) ||
-        !socket.setSendTimeout(options_.ioTimeout) ||
-        !socket.setReceiveTimeout(options_.ioTimeout))
+        !socket.setSendTimeout(options_.ioTimeout) || !socket.setReceiveTimeout(options_.ioTimeout))
         return std::nullopt;
 
     (void)socket.setNoDelay(true); // Best effort: small RPCs shouldn't wait on Nagle.

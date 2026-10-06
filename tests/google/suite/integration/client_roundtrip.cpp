@@ -163,5 +163,6 @@ TEST(ClientRoundtrip, SlowHandlerTimesOut) {
     const auto elapsed = std::chrono::steady_clock::now() - begin;
 
     EXPECT_FALSE(response.has_value());
-    EXPECT_TRUE(elapsed < std::chrono::milliseconds(500)); // gave up well before the handler finished.
+    EXPECT_TRUE(elapsed <
+                std::chrono::milliseconds(500)); // gave up well before the handler finished.
 }
