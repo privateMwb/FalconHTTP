@@ -201,7 +201,7 @@ bool Socket::connect(const std::string& address, uint16_t port,
 #endif
         if (inProgress) {
             const auto clamped =
-                std::min<long long>(timeout.count(), std::numeric_limits<int>::max());
+                std::min<long long>(timeout.count(), (std::numeric_limits<int>::max)());
             connected = awaitConnect(fd, static_cast<int>(clamped));
         }
     }
@@ -257,7 +257,7 @@ bool Socket::setReceiveTimeout(std::chrono::milliseconds timeout) noexcept {
 
 #ifdef _WIN32
     const DWORD value =
-        static_cast<DWORD>(std::min<long long>(ms, std::numeric_limits<int>::max()));
+        static_cast<DWORD>(std::min<long long>(ms, (std::numeric_limits<int>::max)()));
     return ::setsockopt(fd_, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char*>(&value),
                         sizeof(value)) == 0;
 #else
@@ -273,7 +273,7 @@ bool Socket::setSendTimeout(std::chrono::milliseconds timeout) noexcept {
 
 #ifdef _WIN32
     const DWORD value =
-        static_cast<DWORD>(std::min<long long>(ms, std::numeric_limits<int>::max()));
+        static_cast<DWORD>(std::min<long long>(ms, (std::numeric_limits<int>::max)()));
     return ::setsockopt(fd_, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<const char*>(&value),
                         sizeof(value)) == 0;
 #else
