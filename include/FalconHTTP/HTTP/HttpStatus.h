@@ -27,11 +27,10 @@ namespace FalconHTTP::HTTP {
 /**
  * @enum HttpStatus
  * @brief Supported HTTP response status codes.
- * @note This set is intentionally minimal. 302 was added for redirect
- *       support; still missing are the rest of the 3xx family
- *       (301/304/307/308), 409 Conflict, 429 Too Many Requests, and the
- *       5xx family beyond 500/501. Extend as the library's feature set
- *       grows further.
+ * @note This set is intentionally minimal. 302, 307, and 308 cover
+ *       redirects; still missing are 301/304, 409 Conflict, and the
+ *       5xx family beyond 500/501/503. Extend as the library's feature
+ *       set grows further.
  */
 enum class HttpStatus {
     Ok = 200,
@@ -40,6 +39,12 @@ enum class HttpStatus {
     /// Redirect target given via the response's `Location` header.
     /// Added for Shrtn's `GET /:code` short-link redirect.
     Found = 302,
+    /// Redirect that, unlike 302, obliges the client to repeat the
+    /// request with the same method and body (PUT/DELETE stay PUT/DELETE).
+    /// Target given via the `Location` header. Not permanent.
+    TemporaryRedirect = 307,
+    /// Same method-preserving rule as TemporaryRedirect, but permanent.
+    PermanentRedirect = 308,
     BadRequest = 400,
     Unauthorized = 401,
     Forbidden = 403,

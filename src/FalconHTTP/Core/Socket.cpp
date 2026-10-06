@@ -2,8 +2,8 @@
  * @file Socket.cpp
  * @brief Socket implementation.
  *
- * Contains the implementation of Socket's construction, socket options,
- * I/O, and lifecycle management across POSIX and Windows.
+ * Contains the implementation of Socket's construction, connecting,
+ * socket options, I/O, and lifecycle management across POSIX and Windows.
  */
 
 // ============================================================
@@ -14,15 +14,19 @@
 //   1. Windows Initialization
 //   2. Constructors & Destructor
 //   3. Creation
-//   4. Socket Options
-//   5. I/O
-//   6. Lifecycle
-//   7. Accessories
+//   4. Connection
+//   5. Socket Options
+//   6. I/O
+//   7. Lifecycle
+//   8. Accessories
 //
 // ============================================================
 
 // clang-format off
 #include <FalconHTTP/Core/Socket.h> // Socket (own header)
+
+#include <algorithm> // std::min, std::max - clamping timeouts to the OS's integer ranges
+#include <limits>    // std::numeric_limits<int>::max - poll() timeout ceiling
 
 #ifdef _WIN32
 #include <winsock2.h> // socket, send, recv, setsockopt, closesocket, shutdown
@@ -36,7 +40,8 @@
 #include <unistd.h>      // close
 #include <fcntl.h>       // fcntl (non-blocking mode)
 #include <sys/ioctl.h>   // ioctl (FIONBIO fallback)
-#include <cerrno>        // errno, EINTR
+#include <cerrno>        // errno, EINTR, EINPROGRESS
+#include <poll.h>        // poll, pollfd - waiting for a non-blocking connect()
 #endif
 // clang-format on
 
@@ -105,7 +110,109 @@ Socket Socket::createTcp() noexcept {
 }
 
 // ============================================================
-//  Section 4 — Socket Options
+//  Section 4 — Connection
+// ============================================================
+
+namespace {
+
+// Fills @p out from a dotted-decimal IPv4 address and port. Hostnames
+// are deliberately not resolved here - callers pass numeric addresses.
+bool fillAddress(const std::string& address, uint16_t port, sockaddr_in& out) noexcept {
+    out = sockaddr_in{};
+    out.sin_family = AF_INET;
+    out.sin_port = htons(port);
+
+    return ::inet_pton(AF_INET, address.c_str(), &out.sin_addr) == 1;
+}
+
+// Waits up to @p timeoutMs for a non-blocking connect() already in
+// flight on @p fd to finish, then reads its outcome from SO_ERROR.
+bool awaitConnect(int fd, int timeoutMs) noexcept {
+#ifdef _WIN32
+    WSAPOLLFD pollEntry{};
+    pollEntry.fd = static_cast<SOCKET>(fd);
+    pollEntry.events = POLLWRNORM;
+
+    if (::WSAPoll(&pollEntry, 1, timeoutMs) <= 0)
+        return false;
+
+    int error = 0;
+    int length = sizeof(error);
+    if (::getsockopt(static_cast<SOCKET>(fd), SOL_SOCKET, SO_ERROR, reinterpret_cast<char*>(&error),
+                     &length) != 0)
+        return false;
+
+    return error == 0;
+#else
+    pollfd pollEntry{};
+    pollEntry.fd = fd;
+    pollEntry.events = POLLOUT;
+
+    int ready;
+    do {
+        ready = ::poll(&pollEntry, 1, timeoutMs);
+    } while (ready < 0 && errno == EINTR);
+
+    if (ready <= 0)
+        return false; // Timed out (0) or poll() itself failed (-1).
+
+    int error = 0;
+    socklen_t length = sizeof(error);
+    if (::getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &length) != 0)
+        return false;
+
+    return error == 0;
+#endif
+}
+
+} // namespace
+
+bool Socket::connect(const std::string& address, uint16_t port) noexcept {
+    const int fd = fd_.load(std::memory_order_acquire);
+    sockaddr_in target;
+
+    if (fd == invalidHandle || !fillAddress(address, port, target))
+        return false;
+
+    return ::connect(fd, reinterpret_cast<const sockaddr*>(&target), sizeof(target)) == 0;
+}
+
+bool Socket::connect(const std::string& address, uint16_t port,
+                     std::chrono::milliseconds timeout) noexcept {
+    const int fd = fd_.load(std::memory_order_acquire);
+    sockaddr_in target;
+
+    if (fd == invalidHandle || timeout.count() <= 0 || !fillAddress(address, port, target))
+        return false;
+
+    if (!setNonBlocking(true))
+        return false;
+
+    bool connected = false;
+    const int result = ::connect(fd, reinterpret_cast<const sockaddr*>(&target), sizeof(target));
+
+    if (result == 0) {
+        connected = true; // Completed immediately (loopback often does).
+    } else {
+#ifdef _WIN32
+        const bool inProgress = ::WSAGetLastError() == WSAEWOULDBLOCK;
+#else
+        const bool inProgress = errno == EINPROGRESS;
+#endif
+        if (inProgress) {
+            const auto clamped =
+                std::min<long long>(timeout.count(), std::numeric_limits<int>::max());
+            connected = awaitConnect(fd, static_cast<int>(clamped));
+        }
+    }
+
+    // Documented contract: blocking mode on return, success or not.
+    (void)setNonBlocking(false);
+    return connected;
+}
+
+// ============================================================
+//  Section 5 — Socket Options
 // ============================================================
 
 bool Socket::setReuseAddr(bool enable) noexcept {
@@ -145,8 +252,38 @@ bool Socket::setNoDelay(bool enable) noexcept {
 #endif
 }
 
+bool Socket::setReceiveTimeout(std::chrono::milliseconds timeout) noexcept {
+    const long long ms = std::max<long long>(timeout.count(), 0);
+
+#ifdef _WIN32
+    const DWORD value = static_cast<DWORD>(std::min<long long>(ms, std::numeric_limits<int>::max()));
+    return ::setsockopt(fd_, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char*>(&value),
+                        sizeof(value)) == 0;
+#else
+    timeval value{};
+    value.tv_sec = static_cast<time_t>(ms / 1000);
+    value.tv_usec = static_cast<suseconds_t>((ms % 1000) * 1000);
+    return ::setsockopt(fd_, SOL_SOCKET, SO_RCVTIMEO, &value, sizeof(value)) == 0;
+#endif
+}
+
+bool Socket::setSendTimeout(std::chrono::milliseconds timeout) noexcept {
+    const long long ms = std::max<long long>(timeout.count(), 0);
+
+#ifdef _WIN32
+    const DWORD value = static_cast<DWORD>(std::min<long long>(ms, std::numeric_limits<int>::max()));
+    return ::setsockopt(fd_, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<const char*>(&value),
+                        sizeof(value)) == 0;
+#else
+    timeval value{};
+    value.tv_sec = static_cast<time_t>(ms / 1000);
+    value.tv_usec = static_cast<suseconds_t>((ms % 1000) * 1000);
+    return ::setsockopt(fd_, SOL_SOCKET, SO_SNDTIMEO, &value, sizeof(value)) == 0;
+#endif
+}
+
 // ============================================================
-//  Section 5 — I/O
+//  Section 6 — I/O
 // ============================================================
 
 std::ptrdiff_t Socket::send(const void* data, std::size_t length) noexcept {
@@ -188,7 +325,7 @@ std::ptrdiff_t Socket::receive(void* buffer, std::size_t length) noexcept {
 }
 
 // ============================================================
-//  Section 6 — Lifecycle
+//  Section 7 — Lifecycle
 // ============================================================
 
 void Socket::close() noexcept {
@@ -213,7 +350,7 @@ bool Socket::isValid() const noexcept {
 }
 
 // ============================================================
-//  Section 7 — Accessories
+//  Section 8 — Accessories
 // ============================================================
 
 int Socket::handle() const noexcept {

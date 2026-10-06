@@ -23,6 +23,15 @@ TEST(HttpStatus, ReturnsCommonReasonPhrases) {
     EXPECT_EQ(statusReasonPhrase(HttpStatus::NotFound), "Not Found");
 }
 
+// Verifies the method-preserving redirect codes return their phrases
+// and keep their RFC 9110 numeric values.
+TEST(HttpStatus, ReturnsRedirectPhrases) {
+    EXPECT_EQ(statusReasonPhrase(HttpStatus::TemporaryRedirect), "Temporary Redirect");
+    EXPECT_EQ(statusReasonPhrase(HttpStatus::PermanentRedirect), "Permanent Redirect");
+    EXPECT_EQ(static_cast<int>(HttpStatus::TemporaryRedirect), 307);
+    EXPECT_EQ(static_cast<int>(HttpStatus::PermanentRedirect), 308);
+}
+
 // Verifies the codes tied to Router::dispatch()'s DispatchResult and
 // Server's DoS caps return their correct phrases.
 TEST(HttpStatus, ReturnsDispatchAndCapPhrases) {

@@ -103,6 +103,7 @@
 
 - **Case-insensitive header handling** — `HttpRequest`/`HttpResponse` normalize header names to lowercase on both insert and lookup (RFC 7230 §3.2), so `Content-Type` and `content-type` always resolve to the same entry.
 - **Method-aware routing** — `Router::dispatch()` distinguishes a path with no matching route (`NotFound`/404) from a path that matches but not for the requested method (`MethodNotAllowed`/405), rather than collapsing both into a generic miss.
+- **Blocking HTTP client** — `HttpClient` sends one request per connection (`Connection: close`, matching what `Server` speaks) with bounded connect and per-call I/O timeouts, and returns `std::nullopt` on any transport failure rather than hanging; error statuses such as 404/503 come back as ordinary responses, and redirects (including the method-preserving 307/308) are returned, never followed. Hosts are dotted-decimal IPv4 addresses.
 - **Server-Sent Events streaming** — `Router::stream()` registers a `StreamHandler` given an `SseConnection` instead of a one-shot `HttpResponse`, able to push framed events over a single held-open connection for as long as the client stays connected; disconnects are detected on the next failed write, not assumed. `ServerConfig::maxStreamingConnections` caps how many can run at once (half the thread pool by default) so a burst of subscribers can't starve every other in-flight request behind the pool's unbounded queue.
 - **Onion-model middleware chain** — `Server::use()` registers middleware that wraps the handler in registration order, with `Cors`, `Logger`, and `Recovery` built in; `Recovery` converts any uncaught exception into a clean 500 instead of taking down the handling thread. Headers a middleware sets (e.g. `Cors`) are honored on streaming routes too, forwarded into the SSE preamble.
 - **Request-size DoS protection** — `ServerConfig::maxHeaderSize`/`maxBodySize` reject an oversized header block or body with 431/413 before it's ever fully buffered into memory.
@@ -270,6 +271,8 @@ FalconHTTP/
 │       │   └── Router.h
 │       ├── Streaming/
 │       │   └── SseConnection.h
+│       ├── Client/
+│       │   └── HttpClient.h
 │       ├── Middleware/
 │       │   ├── Middleware.h
 │       │   ├── Cors.h
@@ -305,6 +308,8 @@ FalconHTTP/
 │       │   └── Router.cpp
 │       ├── Streaming/
 │       │   └── SseConnection.cpp
+│       ├── Client/
+│       │   └── HttpClient.cpp
 │       ├── Middleware/
 │       │   ├── Cors.cpp
 │       │   ├── Logger.cpp

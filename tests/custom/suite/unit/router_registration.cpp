@@ -108,7 +108,7 @@ static void returns_not_found_for_unmatched_path() {
 
 // Verifies dispatch() returns MethodNotAllowed when a route's pattern
 // matches the path but only for a different method.
-static void returns_method_not_allowed_for_wrong_method() {
+static void wrong_method_rejected() {
     Router router;
     router.get("/items", [](const HttpRequest&, HttpResponse&) {});
 
@@ -126,7 +126,7 @@ static void run_tests() {
     RUN(other_methods_register_correctly);
     RUN(dispatch_populates_path_params);
     RUN(returns_not_found_for_unmatched_path);
-    RUN(returns_method_not_allowed_for_wrong_method);
+    RUN(wrong_method_rejected);
 }
 
 REGISTER_TEST_SUITE();
