@@ -20,16 +20,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: recursive
 
       - name: Install dependencies
         run: |
           sudo apt update
           sudo apt install -y cmake g++ lcov
 
-      # Benchmarks/tools/examples are skipped: instrumenting a fetched
-      # third-party dependency (tools/ pulls in nlohmann_json) with
-      # --coverage adds irrelevant, unowned coverage noise and slows
-      # the build for no benefit.
+      # Benchmarks/regression/examples are skipped: instrumenting a
+      # fetched third-party dependency (regression/ pulls in
+      # nlohmann_json) with --coverage adds irrelevant, unowned coverage
+      # noise and slows the build for no benefit.
       - name: Configure
         run: |
           cmake -S . -B build \
@@ -58,6 +60,7 @@ jobs:
 
           lcov --remove coverage.info \
             '*/tests/*' \
+            '*/libs/internal/*' \
             --output-file coverage.filtered.info \
             --ignore-errors unused,inconsistent,inconsistent
 
